@@ -185,9 +185,8 @@ while i <= ymax - 1:
     print(round((end-start)*100)/100)
     """
     Comment out the next 5 lines to disable outputting to tmp2.png every line. This is recommended unless
-    at the same time. That only works on linux, btw. 
+    you're running the below command at the same time. That only works on linux, btw. 
     feh --force-aliasing -ZR 1 -g 800x800 tmp2.png
-    you're running 
     """
     
     """
