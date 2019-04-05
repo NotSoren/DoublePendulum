@@ -11,7 +11,7 @@ from termcolor import colored, cprint
 args = sys.argv
 if len(args) >= 3:
     im_dim = int(re.sub('[^0-9]', '', args[1]))
-    mult = float(re.sub('[^0-9.]', '', args[2]))
+    mult = int(re.sub('[^0-9]', '', args[2]))
 elif len(args) >= 2:
     im_dim = int(re.sub('[^0-9]', '', args[1]))
     mult = 1
