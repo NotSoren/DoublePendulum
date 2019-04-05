@@ -7,21 +7,6 @@ import multiprocessing
 import time
 from termcolor import colored, cprint
 
-
-args = sys.argv
-if len(args) >= 3:
-    im_dim = int(re.sub('[^0-9]', '', args[1]))
-    mult = float(re.sub('[^0-9.]', '', args[2]))
-elif len(args) >= 2:
-    im_dim = int(re.sub('[^0-9]', '', args[1]))
-    mult = 1
-else:
-    im_dim = 75
-    mult = 1
-
-pixels = np.zeros((im_dim, im_dim, 3))
-pixels = pixels.astype(int)
-
 def LR(T1, T2, w1, w2):
     alpha2 = math.cos(T1 - T2)
     alpha1 = alpha2 / 2
@@ -88,6 +73,32 @@ def calcPix(i1,j1,pixels,out1,out2,out3):
     out1.value = pixels[i1][j1][0]
     out2.value = pixels[i1][j1][1]
     out3.value = pixels[i1][j1][2]
+
+args = sys.argv
+if len(args) >= 3:
+    im_dim = int(re.sub('[^0-9]', '', args[1]))
+    mult = float(re.sub('[^0-9.]', '', args[2]))
+elif len(args) >= 2:
+    im_dim = int(re.sub('[^0-9]', '', args[1]))
+    mult = 1
+else:
+    im_dim = 75
+    mult = 1
+
+xmin = int(0.16 * im_dim)
+xmax = int(.187 * im_dim)
+ymin = int(0.21 * im_dim)
+ymax = int(.23 * im_dim)
+"""
+xmin = 0
+xmax = im_dim
+ymin = 0
+ymax = im_dim
+"""
+
+
+pixels = np.zeros((im_dim, im_dim, 3)) # This will have to be edited to allow for weird values of xmin,ymin,xmax,ymax.
+pixels = pixels.astype(int)
     
 
 left = 1
@@ -107,16 +118,6 @@ t10 = multiprocessing.Value('i')
 t11 = multiprocessing.Value('i')
 t12 = multiprocessing.Value('i')
 
-xmin = int(0.16 * im_dim)
-xmax = int(.187 * im_dim)
-ymin = int(0.21 * im_dim)
-ymax = int(.23 * im_dim)
-"""
-xmin = 0
-xmax = im_dim
-ymin = 0
-ymax = im_dim
-"""
 print("Running between X=",xmin,xmax)
 print("Running between Y=",ymin,ymax)
 
