@@ -204,6 +204,6 @@ pixels = [tuple(l) for l in pixels]
 im2 = Image.new("RGB", (im_dim, im_dim))
 im2.putdata(pixels)
 #name = "doot"+str(im_dim)+"MT"+str(mult)+".png"
-name = "doot"+str(im_dim)+"MT.png"
+name = "outputs/doot"+str(im_dim)+"MT.png"
 im2.save(name)
  
