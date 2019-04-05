@@ -117,7 +117,7 @@ xmax = im_dim
 ymin = 0
 ymax = im_dim
 """
-print("Running between X="xmin,xmax)
+print("Running between X=",xmin,xmax)
 print("Running between Y=",ymin,ymax)
 
 i=ymin
