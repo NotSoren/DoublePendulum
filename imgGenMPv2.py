@@ -47,7 +47,7 @@ def calcPix(i1,j1,pixels,out1,out2,out3):
         out2.value = 255
         out3.value = 255
         #print(colored(format(j1),"yellow"),end=" ")
-        print('.',end='')
+        print(' ',end='')
         return
 
     cap = 10000*mult
@@ -106,7 +106,7 @@ t9 = multiprocessing.Value('i')
 t10 = multiprocessing.Value('i')
 t11 = multiprocessing.Value('i')
 t12 = multiprocessing.Value('i')
-
+"""
 xmin = int(0.16 * im_dim)
 xmax = int(.187 * im_dim)
 ymin = int(0.21 * im_dim)
@@ -116,15 +116,17 @@ xmin = 0
 xmax = im_dim
 ymin = 0
 ymax = im_dim
-"""
+
 print(xmin,xmax)
 print(ymin,ymax)
 
 i=ymin
 while i <= ymax - 1:
-    print(i,end=": ")
-    if i < 10:
+    print(i,end=":")
+    if i < 100:
         print(" ",end="")
+        if i < 10:
+            print(" ",end="")
     j=xmin
     start = time.time()
     while j <= xmax - 1:
@@ -180,13 +182,14 @@ while i <= ymax - 1:
             #print("done")
         end = time.time()
         j+=1
-    print(round((end-start)*10)/10)
+    print(round((end-start)*100)/100)
     """
     Comment out the next 5 lines to disable outputting to tmp2.png every line. This is recommended unless
-    you're running 
-    feh --force-aliasing -ZR 1 -g 800x800 tmp2.png
     at the same time. That only works on linux, btw. 
+    feh --force-aliasing -ZR 1 -g 800x800 tmp2.png
+    you're running 
     """
+    
     """
     pixel2 = pixels.tolist()
     pixel2 = [item for sublist in pixel2 for item in sublist]
