@@ -184,13 +184,14 @@ while i <= yr - 1:
     feh --force-aliasing -ZR 1 -g 800x800 tmp2.png
     at the same time. That only works on linux, btw. 
     """
-    
+    """
     pixel2 = pixels.tolist()
     pixel2 = [item for sublist in pixel2 for item in sublist]
     pixel2 = [tuple(l) for l in pixel2]
     im3 = Image.new("RGB", (xr, yr))
     im3.putdata(pixel2)
     im3.save("outputs/tmp2.png")
+    """
     i+=1
 
 pixels = pixels.tolist()

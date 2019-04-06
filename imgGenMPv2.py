@@ -32,7 +32,7 @@ def calcPix(i1,j1,pixels,out1,out2,out3):
         out2.value = 255
         out3.value = 255
         #print(colored(format(j1),"yellow"),end=" ")
-        print(' ',end='')
+        print('_',end='')
         return
 
     cap = 10000*mult
