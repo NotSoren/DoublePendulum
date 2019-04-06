@@ -80,10 +80,10 @@ else:
     im_dim = 75
     mult = 1
 
-xmin = int(0.16 * im_dim)
-xmax = int(.187 * im_dim)
-ymin = int(0.21 * im_dim)
-ymax = int(.23 * im_dim)
+xmin = int(0.4 * im_dim)
+xmax = int(.6 * im_dim)
+ymin = int(0.8 * im_dim)
+ymax = int(.95 * im_dim)
 
 """
 xmin = 0
@@ -184,14 +184,13 @@ while i <= yr - 1:
     feh --force-aliasing -ZR 1 -g 800x800 tmp2.png
     at the same time. That only works on linux, btw. 
     """
-    """
+    
     pixel2 = pixels.tolist()
     pixel2 = [item for sublist in pixel2 for item in sublist]
     pixel2 = [tuple(l) for l in pixel2]
-    im3 = Image.new("RGB", (im_dim, im_dim))
+    im3 = Image.new("RGB", (xr, yr))
     im3.putdata(pixel2)
-    im3.save("tmp2.png")
-    """
+    im3.save("outputs/tmp2.png")
     i+=1
 
 pixels = pixels.tolist()
