@@ -7,21 +7,6 @@ import multiprocessing
 import time
 from termcolor import colored, cprint
 
-
-args = sys.argv
-if len(args) >= 3:
-    im_dim = int(re.sub('[^0-9]', '', args[1]))
-    mult = int(re.sub('[^0-9]', '', args[2]))
-elif len(args) >= 2:
-    im_dim = int(re.sub('[^0-9]', '', args[1]))
-    mult = 1
-else:
-    im_dim = 75
-    mult = 1
-
-pixels = np.zeros((im_dim, im_dim, 3))
-pixels = pixels.astype(int)
-
 def LR(T1, T2, w1, w2):
     alpha2 = math.cos(T1 - T2)
     alpha1 = alpha2 / 2
@@ -89,6 +74,19 @@ def calcPix(i1,j1,pixels,out1,out2,out3):
     out2.value = pixels[i1][j1][1]
     out3.value = pixels[i1][j1][2]
     
+args = sys.argv
+if len(args) >= 3:
+    im_dim = int(re.sub('[^0-9]', '', args[1]))
+    mult = int(re.sub('[^0-9]', '', args[2]))
+elif len(args) >= 2:
+    im_dim = int(re.sub('[^0-9]', '', args[1]))
+    mult = 1
+else:
+    im_dim = 75
+    mult = 1
+
+pixels = np.zeros((im_dim, im_dim, 3))
+pixels = pixels.astype(int)
 
 left = 1
 pi2 = 2 * math.pi
