@@ -5,7 +5,7 @@ import sys
 import re
 import multiprocessing
 import time
-from termcolor import colored, cprint
+
 
 def LR(T1, T2, w1, w2):
     alpha2 = math.cos(T1 - T2)
@@ -18,21 +18,20 @@ def LR(T1, T2, w1, w2):
     a2 = (F2 - alpha2 * F1) / (1 - alpha1 * alpha2)
     return np.array([w1, w2, a1, a2])
 
-def calcPix(i1,j1,pixels,out1,out2,out3):
+def calcPix(i1,j1,out1,out2,out3):
     pi2 = 2 * math.pi
     step = 0
     h = 0.01
     a_1 = 0
     a_2 = 0
-
+    pixel = [0,0,0]
     Th_1 = (i1 / im_dim) * pi2
     Th_2 = (j1 / im_dim) * pi2
     if (3*math.cos(Th_1) + math.cos(Th_2) < -2):
         out1.value = 255
         out2.value = 255
         out3.value = 255
-        #print(colored(format(j1),"yellow"),end=" ")
-        print('.',end='')
+        print('_',end='')
         return
 
     cap = 10000*mult
@@ -55,24 +54,20 @@ def calcPix(i1,j1,pixels,out1,out2,out3):
     #print(i1,j1,"s:", step)
     
     if step >= 10000*mult:
-        pixels[i1][j1] = (255, 255, 255)
+        pixel = (255, 255, 255)
         #print(j1,end=" ")
     elif step > 1000*mult:
-        pixels[i1][j1] = [int(round(l*step/10000/mult)) for l in (0, 0, 255)]
-        #print(colored(format(j1),'blue'),end=" ")
+        pixel = [int(round(l*step/10000/mult)) for l in (0, 0, 255)]
     elif step > 100*mult:
-        pixels[i1][j1] = [int(round(l*step/1000/mult)) for l in (255, 0, 255)]
-        #print(colored(format(j1),'magenta'),end=" ")
+        pixel = [int(round(l*step/1000/mult)) for l in (255, 0, 255)]
     elif step > 10*mult:
-        pixels[i1][j1] = [int(round(l*step/100/mult)) for l in (255, 0, 0)]
-        #print(colored(format(j1),'red'),end=" ")
+        pixel = [int(round(l*step/100/mult)) for l in (255, 0, 0)]
     else:
-        pixels[i1][j1] = [int(round(l*step/10/mult)) for l in (0, 255, 0)]
-        #print(colored(format(j1),'green'),end=" ")
+        pixel = [int(round(l*step/10/mult)) for l in (0, 255, 0)]
     print('.',end='')
-    out1.value = pixels[i1][j1][0]
-    out2.value = pixels[i1][j1][1]
-    out3.value = pixels[i1][j1][2]
+    out1.value = pixel[0]
+    out2.value = pixel[1]
+    out3.value = pixel[2]
 
 args = sys.argv
 if len(args) >= 3:
@@ -89,6 +84,7 @@ xmin = int(0.16 * im_dim)
 xmax = int(.187 * im_dim)
 ymin = int(0.21 * im_dim)
 ymax = int(.23 * im_dim)
+
 """
 xmin = 0
 xmax = im_dim
@@ -96,8 +92,10 @@ ymin = 0
 ymax = im_dim
 """
 
-
-pixels = np.zeros((im_dim, im_dim, 3)) # This will have to be edited to allow for weird values of xmin,ymin,xmax,ymax.
+xr = xmax - xmin
+yr = ymax - ymin
+print(xr,yr)
+pixels = np.zeros((yr, xr, 3)) # This will have to be edited to allow for weird values of xmin,ymin,xmax,ymax.
 pixels = pixels.astype(int)
     
 
@@ -121,19 +119,17 @@ t12 = multiprocessing.Value('i')
 print("Running between X=",xmin,xmax)
 print("Running between Y=",ymin,ymax)
 
-i=ymin
-while i <= ymax - 1:
+i=0
+while i <= yr - 1:
     print(i,end=": ")
-    if i < 10:
-        print(" ",end="")
-    j=xmin
+    j=0
     start = time.time()
-    while j <= xmax - 1:
-        if j <= xmax - 4:
-            p1 = multiprocessing.Process(target=calcPix, args=(i,j,pixels,t1,t2,t3)) # Creating processes
-            p2 = multiprocessing.Process(target=calcPix, args=(i,j+1,pixels,t4,t5,t6)) 
-            p3 = multiprocessing.Process(target=calcPix, args=(i,j+2,pixels,t7,t8,t9))
-            p4 = multiprocessing.Process(target=calcPix, args=(i,j+3,pixels,t10,t11,t12))
+    while j <= xr - 1:
+        if j <= xr - 4:
+            p1 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin,t1,t2,t3)) # Creating processes
+            p2 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin+1,t4,t5,t6)) 
+            p3 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin+2,t7,t8,t9))
+            p4 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin+3,t10,t11,t12))
             #print(j,"-",j+3,end=': ')
             p1.start() # Starting Processes
             p2.start()
@@ -151,9 +147,9 @@ while i <= ymax - 1:
             pixels[i][j+3] = [t10.value,t11.value,t12.value]
             #print("done")
             j+=3
-        elif j <= im_dim - 2:
-            p1 = multiprocessing.Process(target=calcPix, args=(i,j,pixels,t1,t2,t3)) # Creating processes
-            p2 = multiprocessing.Process(target=calcPix, args=(i,j+1,pixels,t4,t5,t6))
+        elif j <= xr - 2:
+            p1 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin,t1,t2,t3)) # Creating processes
+            p2 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin+1,t4,t5,t6))
             #print(j,"-",j+1,end=": ")
             p1.start() # Starting processes
             p2.start()
@@ -171,7 +167,7 @@ while i <= ymax - 1:
             better logging and consistency. Also because I don't want to rewrite the calcPix func to work 
             inside the main process. Sue me. 
             """
-            p1 = multiprocessing.Process(target=calcPix, args=(i,j,pixels,t1,t2,t3)) # Creating process
+            p1 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin,t1,t2,t3)) # Creating process
             #print(j,end=": ")
             p1.start() # Starting process
             
@@ -201,9 +197,9 @@ while i <= ymax - 1:
 pixels = pixels.tolist()
 pixels = [item for sublist in pixels for item in sublist]
 pixels = [tuple(l) for l in pixels]
-im2 = Image.new("RGB", (im_dim, im_dim))
+im2 = Image.new("RGB", (xr, yr))
 im2.putdata(pixels)
 #name = "doot"+str(im_dim)+"MT"+str(mult)+".png"
-name = "outputs/doot"+str(im_dim)+"MT.png"
+name = "outputs/doot"+str(im_dim)+"MTZoom.png"
 im2.save(name)
  
