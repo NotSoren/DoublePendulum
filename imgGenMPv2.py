@@ -32,7 +32,7 @@ def calcPix(i1,j1,pixels,out1,out2,out3):
         out2.value = 255
         out3.value = 255
         #print(colored(format(j1),"yellow"),end=" ")
-        print('_',end='')
+        print('  ',end='')
         return
 
     cap = 10000*mult
@@ -57,19 +57,23 @@ def calcPix(i1,j1,pixels,out1,out2,out3):
     if step >= 10000*mult:
         pixels[i1][j1] = (255, 255, 255)
         #print(j1,end=" ")
+        print('  ',end='')
     elif step > 1000*mult:
         pixels[i1][j1] = [int(round(l*step/10000/mult)) for l in (0, 0, 255)]
         #print(colored(format(j1),'blue'),end=" ")
+        print('░░',end='')
     elif step > 100*mult:
         pixels[i1][j1] = [int(round(l*step/1000/mult)) for l in (255, 0, 255)]
         #print(colored(format(j1),'magenta'),end=" ")
+        print('▒▒',end='')
     elif step > 10*mult:
         pixels[i1][j1] = [int(round(l*step/100/mult)) for l in (255, 0, 0)]
         #print(colored(format(j1),'red'),end=" ")
+        print('▓▓',end='')
     else:
         pixels[i1][j1] = [int(round(l*step/10/mult)) for l in (0, 255, 0)]
         #print(colored(format(j1),'green'),end=" ")
-    print('.',end='')
+        print('██',end='')
     out1.value = pixels[i1][j1][0]
     out2.value = pixels[i1][j1][1]
     out3.value = pixels[i1][j1][2]
@@ -202,7 +206,7 @@ pixels = [item for sublist in pixels for item in sublist]
 pixels = [tuple(l) for l in pixels]
 im2 = Image.new("RGB", (im_dim, im_dim))
 im2.putdata(pixels)
-#name = "doot"+str(im_dim)+"MT"+str(mult)+".png"
-name = "outputs/doot"+str(im_dim)+"MT.png"
+name = "outputs/doot"+str(im_dim)+"MT"+str(mult)+".png"
+#name = "outputs/doot"+str(im_dim)+"MT.png"
 im2.save(name)
  

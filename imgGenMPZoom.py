@@ -199,7 +199,7 @@ pixels = [item for sublist in pixels for item in sublist]
 pixels = [tuple(l) for l in pixels]
 im2 = Image.new("RGB", (xr, yr))
 im2.putdata(pixels)
-#name = "doot"+str(im_dim)+"MT"+str(mult)+".png"
-name = "outputs/doot"+str(im_dim)+"MTZoom.png"
+name = "outputs/doot"+str(im_dim)+"MT"+str(mult)+".png"
+#name = "outputs/doot"+str(im_dim)+"MTZoom.png"
 im2.save(name)
  
