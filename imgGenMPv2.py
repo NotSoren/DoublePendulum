@@ -191,14 +191,13 @@ while i <= ymax - 1:
     feh --force-aliasing -ZR 1 -g 800x800 tmp2.png
     """
     
-    """
+    
     pixel2 = pixels.tolist()
     pixel2 = [item for sublist in pixel2 for item in sublist]
     pixel2 = [tuple(l) for l in pixel2]
     im3 = Image.new("RGB", (im_dim, im_dim))
     im3.putdata(pixel2)
-    im3.save("tmp2.png")
-    """
+    im3.save("outputs/tmp2.png")
     i+=1
 
 pixels = pixels.tolist()
