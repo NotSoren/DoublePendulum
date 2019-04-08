@@ -1,4 +1,3 @@
-# import the pygame module, so you can use it
 import pygame, math
 import numpy as np
 import os
@@ -12,15 +11,13 @@ pi2 = math.pi * 2
 
 # updating the array of parameters
 def LR(T1, T2, w1, w2):
-    alpha1 = math.cos(T1 - T2) / 2
     alpha2 = math.cos(T1 - T2)
-
-    F1 = -w2**2 * math.sin(T1 - T2) / 2 + 9.8 * math.sin(T1)
-    F2 = w1**2 * math.sin(T1 - T2) + 9.8 * math.sin(T2)
-
+    alpha1 = alpha2 / 2
+    tmp = math.sin(T1 - T2)
+    F1 = -w2**2 * tmp / 2 + 9.8 * math.sin(T1)
+    F2 = w1**2 * tmp + 9.8 * math.sin(T2)
     a1 = (F1 - alpha1 * F2) / (1 - alpha1 * alpha2)
     a2 = (F2 - alpha2 * F1) / (1 - alpha1 * alpha2)
-
     return np.array([w1, w2, a1, a2])
 
 # define a main function
@@ -101,7 +98,7 @@ def main():
 
         trail_y = trail_y % 400
 
-        pygame.draw.rect(screen, (0, 255, 0),(trail_x-1, trail_y-1, 3, 3))
+        pygame.draw.rect(screen, (0, 200, 0),(trail_x-1, trail_y-1, 3, 3))
 
         pygame.draw.rect(screen,(255, 255, 255),(0,0,screen_dim[1],screen_dim[1]))
         clock.tick(1/h)

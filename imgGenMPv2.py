@@ -13,7 +13,6 @@ def LR(T1, T2, w1, w2):
     tmp = math.sin(T1 - T2)
     F1 = -w2**2 * tmp / 2 + 9.8 * math.sin(T1)
     F2 = w1**2 * tmp + 9.8 * math.sin(T2)
-    
     a1 = (F1 - alpha1 * F2) / (1 - alpha1 * alpha2)
     a2 = (F2 - alpha2 * F1) / (1 - alpha1 * alpha2)
     return np.array([w1, w2, a1, a2])
