@@ -26,7 +26,7 @@ def main():
     # denominator of h is the frame rate in fps
     h = 1/180
 
-    input_path = "outputs/doot1000MT.png"
+    input_path = "outputs/doot1000MT1.png"
 
     # initialize the pygame module
     pygame.init()
