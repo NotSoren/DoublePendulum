@@ -11,8 +11,10 @@ pi2 = math.pi * 2
 
 # updating the array of parameters
 def LR(T1, T2, w1, w2):
+    alpha1 = math.cos(T1 - T2) / 2
     alpha2 = math.cos(T1 - T2)
-    alpha1 = alpha2 / 2
+    #alpha2 = math.cos(T1 - T2)
+    #alpha1 = alpha2 / 2
     tmp = math.sin(T1 - T2)
     F1 = -w2**2 * tmp / 2 + 9.8 * math.sin(T1)
     F2 = w1**2 * tmp + 9.8 * math.sin(T2)
