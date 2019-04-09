@@ -1,6 +1,7 @@
 import pygame, math
 import numpy as np
 import os
+from pygame import gfxdraw
 
 # global variable for the screen dimensions
 screen_dim = (800,400)
@@ -71,11 +72,11 @@ def main():
     x_2 = x_half + int(round(math.sin(Th_1)*pen_scr_length + math.sin(Th_2)*pen_scr_length))
     y_2 = x_half + int(round(-math.cos(Th_1)*pen_scr_length - math.cos(Th_2)*pen_scr_length))
 
-    pygame.draw.circle(screen, (0, 0, 0), (x_half, x_half), 7)
+    pygame.draw.circle(screen, (0, 0, 0), (x_half, x_half), 4)
     pygame.draw.line(screen, (0, 0, 0), (x_half, x_half), (x_1, y_1), 2)
-    pygame.draw.circle(screen, (0, 0, 0), (x_1, y_1), 7)
+    pygame.draw.circle(screen, (0, 0, 0), (x_1, y_1), 4)
     pygame.draw.line(screen, (0, 0, 0), (x_1, y_1), (x_2, y_2), 2)
-    pygame.draw.circle(screen, (0, 0, 0), (x_2, y_2), 7)
+    pygame.draw.circle(screen, (0, 0, 0), (x_2, y_2), 4)
 
     current_mouse = pygame.mouse.get_pos()
 
@@ -132,11 +133,11 @@ def main():
         x_2 = x_half + int(round(math.sin(Th_1)*pen_scr_length + math.sin(Th_2)*pen_scr_length))
         y_2 = x_half + int(round(-math.cos(Th_1)*pen_scr_length - math.cos(Th_2)*pen_scr_length))
 
-        pygame.draw.circle(screen, (0, 0, 0), (x_half, x_half), 7)
-        pygame.draw.line(screen, (0, 0, 0), (x_half, x_half), (x_1, y_1), 2)
-        pygame.draw.circle(screen, (0, 0, 0), (x_1, y_1), 7)
-        pygame.draw.line(screen, (0, 0, 0), (x_1, y_1), (x_2, y_2), 2)
-        pygame.draw.circle(screen, (0, 0, 0), (x_2, y_2), 7)
+        pygame.gfxdraw.aacircle(screen, x_half, x_half, 4, (0, 0, 0))
+        pygame.draw.aaline(screen, (0, 0, 0), (x_half, x_half), (x_1, y_1), True)
+        pygame.gfxdraw.aacircle(screen, x_1, y_1, 4, (0, 0, 0))
+        pygame.draw.aaline(screen, (0, 0, 0), (x_1, y_1), (x_2, y_2), True)
+        pygame.gfxdraw.aacircle(screen, x_2, y_2, 4, (0, 0, 0))
         #screen.blit(theta_map, (screen_dim[1], 0))
 
         pygame.display.flip()
