@@ -115,6 +115,19 @@ t9 = multiprocessing.Value('i')
 t10 = multiprocessing.Value('i')
 t11 = multiprocessing.Value('i')
 t12 = multiprocessing.Value('i')
+t13 = multiprocessing.Value('i')
+t14 = multiprocessing.Value('i')
+t15 = multiprocessing.Value('i')
+t16 = multiprocessing.Value('i')
+t17 = multiprocessing.Value('i')
+t18 = multiprocessing.Value('i')
+t19 = multiprocessing.Value('i')
+t20 = multiprocessing.Value('i')
+t21 = multiprocessing.Value('i')
+t22 = multiprocessing.Value('i')
+t23 = multiprocessing.Value('i')
+t24 = multiprocessing.Value('i')
+
 
 print("Running between X=",xmin,xmax)
 print("Running between Y=",ymin,ymax)
@@ -125,7 +138,44 @@ while i <= yr - 1:
     j=0
     start = time.time()
     while j <= xr - 1:
-        if j <= xr - 4:
+        if j <= xr - 8:
+            p1 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin,t1,t2,t3)) # Creating processes
+            p2 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin+1,t4,t5,t6)) 
+            p3 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin+2,t7,t8,t9))
+            p4 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin+3,t10,t11,t12))
+            p5 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin+4,t13,t14,t15)) 
+            p6 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin+5,t16,t17,t18))
+            p7 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin+6,t19,t20,t21))
+            p8 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin+7,t22,t23,t24))
+            
+            p1.start() # Starting Processes
+            p2.start()
+            p3.start()
+            p4.start()
+            p5.start()
+            p6.start()
+            p7.start()
+            p8.start()
+
+            p1.join() # Waiting for processes to finish
+            p2.join()
+            p3.join()
+            p4.join()
+            p5.join()
+            p6.join()
+            p7.join()
+            p8.join()
+
+            pixels[i][j] = [t1.value,t2.value,t3.value]
+            pixels[i][j+1] = [t4.value,t5.value,t6.value]
+            pixels[i][j+2] = [t7.value,t8.value,t9.value]
+            pixels[i][j+3] = [t10.value,t11.value,t12.value]
+            pixels[i][j+4] = [t13.value,t14.value,t15.value]
+            pixels[i][j+5] = [t16.value,t17.value,t18.value]
+            pixels[i][j+6] = [t19.value,t20.value,t21.value]
+            pixels[i][j+7] = [t22.value,t23.value,t24.value]
+            j+=7
+        elif j <= xr - 4:
             p1 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin,t1,t2,t3)) # Creating processes
             p2 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin+1,t4,t5,t6)) 
             p3 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin+2,t7,t8,t9))

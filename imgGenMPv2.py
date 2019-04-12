@@ -120,12 +120,7 @@ t21 = multiprocessing.Value('i')
 t22 = multiprocessing.Value('i')
 t23 = multiprocessing.Value('i')
 t24 = multiprocessing.Value('i')
-"""
-xmin = int(0.16 * im_dim)
-xmax = int(.187 * im_dim)
-ymin = int(0.21 * im_dim)
-ymax = int(.23 * im_dim)
-"""
+
 xmin = 0
 xmax = im_dim
 ymin = 0
