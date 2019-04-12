@@ -5,7 +5,8 @@ import sys
 import re
 import multiprocessing
 import time
-from termcolor import colored, cprint
+#from termcolor import colored, cprint
+import gc
 
 def LR(T1, T2, w1, w2):
     alpha2 = math.cos(T1 - T2)
@@ -15,6 +16,7 @@ def LR(T1, T2, w1, w2):
     F2 = w1**2 * tmp + 9.8 * math.sin(T2)
     a1 = (F1 - alpha1 * F2) / (1 - alpha1 * alpha2)
     a2 = (F2 - alpha2 * F1) / (1 - alpha1 * alpha2)
+    #gc.collect()
     return np.array([w1, w2, a1, a2])
 
 def calcPix(i1,j1,pixels,out1,out2,out3):
@@ -52,7 +54,6 @@ def calcPix(i1,j1,pixels,out1,out2,out3):
         if step >= cap:
             break
     #print(i1,j1,"s:", step)
-    
     if step >= 10000*mult:
         pixels[i1][j1] = (255, 255, 255)
         #print(j1,end=" ")
@@ -107,6 +108,18 @@ t9 = multiprocessing.Value('i')
 t10 = multiprocessing.Value('i')
 t11 = multiprocessing.Value('i')
 t12 = multiprocessing.Value('i')
+t13 = multiprocessing.Value('i')
+t14 = multiprocessing.Value('i')
+t15 = multiprocessing.Value('i')
+t16 = multiprocessing.Value('i')
+t17 = multiprocessing.Value('i')
+t18 = multiprocessing.Value('i')
+t19 = multiprocessing.Value('i')
+t20 = multiprocessing.Value('i')
+t21 = multiprocessing.Value('i')
+t22 = multiprocessing.Value('i')
+t23 = multiprocessing.Value('i')
+t24 = multiprocessing.Value('i')
 """
 xmin = int(0.16 * im_dim)
 xmax = int(.187 * im_dim)
@@ -131,12 +144,49 @@ while i <= ymax - 1:
     j=xmin
     start = time.time()
     while j <= xmax - 1:
-        if j <= xmax - 4:
+        if j <= xmax - 8:
             p1 = multiprocessing.Process(target=calcPix, args=(i,j,pixels,t1,t2,t3)) # Creating processes
             p2 = multiprocessing.Process(target=calcPix, args=(i,j+1,pixels,t4,t5,t6)) 
             p3 = multiprocessing.Process(target=calcPix, args=(i,j+2,pixels,t7,t8,t9))
             p4 = multiprocessing.Process(target=calcPix, args=(i,j+3,pixels,t10,t11,t12))
-            #print(j,"-",j+3,end=': ')
+            p5 = multiprocessing.Process(target=calcPix, args=(i,j+4,pixels,t13,t14,t15)) 
+            p6 = multiprocessing.Process(target=calcPix, args=(i,j+5,pixels,t16,t17,t18))
+            p7 = multiprocessing.Process(target=calcPix, args=(i,j+6,pixels,t19,t20,t21))
+            p8 = multiprocessing.Process(target=calcPix, args=(i,j+7,pixels,t22,t23,t24))
+            
+            p1.start() # Starting Processes
+            p2.start()
+            p3.start()
+            p4.start()
+            p5.start()
+            p6.start()
+            p7.start()
+            p8.start()
+
+            p1.join() # Waiting for processes to finish
+            p2.join()
+            p3.join()
+            p4.join()
+            p5.join()
+            p6.join()
+            p7.join()
+            p8.join()
+
+            pixels[i][j] = [t1.value,t2.value,t3.value]
+            pixels[i][j+1] = [t4.value,t5.value,t6.value]
+            pixels[i][j+2] = [t7.value,t8.value,t9.value]
+            pixels[i][j+3] = [t10.value,t11.value,t12.value]
+            pixels[i][j+4] = [t13.value,t14.value,t15.value]
+            pixels[i][j+5] = [t16.value,t17.value,t18.value]
+            pixels[i][j+6] = [t19.value,t20.value,t21.value]
+            pixels[i][j+7] = [t22.value,t23.value,t24.value]
+            j+=7
+        elif j <= xmax - 4:
+            p1 = multiprocessing.Process(target=calcPix, args=(i,j,pixels,t1,t2,t3)) # Creating processes
+            p2 = multiprocessing.Process(target=calcPix, args=(i,j+1,pixels,t4,t5,t6)) 
+            p3 = multiprocessing.Process(target=calcPix, args=(i,j+2,pixels,t7,t8,t9))
+            p4 = multiprocessing.Process(target=calcPix, args=(i,j+3,pixels,t10,t11,t12))
+            
             p1.start() # Starting Processes
             p2.start()
             p3.start()
@@ -151,12 +201,29 @@ while i <= ymax - 1:
             pixels[i][j+1] = [t4.value,t5.value,t6.value]
             pixels[i][j+2] = [t7.value,t8.value,t9.value]
             pixels[i][j+3] = [t10.value,t11.value,t12.value]
-            #print("done")
+            
             j+=3
+        elif j <= im_dim - 3:
+            p1 = multiprocessing.Process(target=calcPix, args=(i,j,pixels,t1,t2,t3)) # Creating processes
+            p2 = multiprocessing.Process(target=calcPix, args=(i,j+1,pixels,t4,t5,t6)) 
+            p3 = multiprocessing.Process(target=calcPix, args=(i,j+2,pixels,t7,t8,t9))
+            
+            p1.start() # Starting Processes
+            p2.start()
+            p3.start()
+            
+            p1.join() # Waiting for processes to finish
+            p2.join()
+            p3.join()
+            
+            pixels[i][j] = [t1.value,t2.value,t3.value]
+            pixels[i][j+1] = [t4.value,t5.value,t6.value]
+            pixels[i][j+2] = [t7.value,t8.value,t9.value]
+            j+=2
         elif j <= im_dim - 2:
             p1 = multiprocessing.Process(target=calcPix, args=(i,j,pixels,t1,t2,t3)) # Creating processes
             p2 = multiprocessing.Process(target=calcPix, args=(i,j+1,pixels,t4,t5,t6))
-            #print(j,"-",j+1,end=": ")
+            
             p1.start() # Starting processes
             p2.start()
             
@@ -165,7 +232,7 @@ while i <= ymax - 1:
 
             pixels[i][j] = [t1.value,t2.value,t3.value]
             pixels[i][j+1] = [t4.value,t5.value,t6.value]
-            #print("done")
+            
             j+=1
         else: 
             """
@@ -198,6 +265,7 @@ while i <= ymax - 1:
     im3.putdata(pixel2)
     im3.save("outputs/tmp2.png")
     i+=1
+    gc.collect()
 
 pixels = pixels.tolist()
 pixels = [item for sublist in pixels for item in sublist]
