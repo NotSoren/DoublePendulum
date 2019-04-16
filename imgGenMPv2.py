@@ -7,6 +7,7 @@ import multiprocessing
 import time
 #from termcolor import colored, cprint
 import gc
+import os
 
 def LR(T1, T2, w1, w2):
     alpha2 = math.cos(T1 - T2)
@@ -79,15 +80,22 @@ def calcPix(i1,j1,pixels,out1,out2,out3):
     out3.value = pixels[i1][j1][2]
     
 args = sys.argv
-if len(args) >= 3:
+if len(args) >= 4:
     im_dim = int(re.sub('[^0-9]', '', args[1]))
     mult = int(re.sub('[^0-9]', '', args[2]))
+    threadCount = int(re.sub('[^0-9]', '', args[3]))
+elif len(args) >= 3:
+    im_dim = int(re.sub('[^0-9]', '', args[1]))
+    mult = int(re.sub('[^0-9]', '', args[2]))
+    threadCount = 4
 elif len(args) >= 2:
     im_dim = int(re.sub('[^0-9]', '', args[1]))
-    mult = 1
+    mult = 1 
+    threadCount = 4
 else:
     im_dim = 75
     mult = 1
+    threadCount = 4
 
 pixels = np.zeros((im_dim, im_dim, 3))
 pixels = pixels.astype(int)
@@ -139,7 +147,7 @@ while i <= ymax - 1:
     j=xmin
     start = time.time()
     while j <= xmax - 1:
-        if j <= xmax - 8:
+        if (j <= xmax - 8) & (threadCount >= 8):
             p1 = multiprocessing.Process(target=calcPix, args=(i,j,pixels,t1,t2,t3)) # Creating processes
             p2 = multiprocessing.Process(target=calcPix, args=(i,j+1,pixels,t4,t5,t6)) 
             p3 = multiprocessing.Process(target=calcPix, args=(i,j+2,pixels,t7,t8,t9))
@@ -176,7 +184,7 @@ while i <= ymax - 1:
             pixels[i][j+6] = [t19.value,t20.value,t21.value]
             pixels[i][j+7] = [t22.value,t23.value,t24.value]
             j+=7
-        elif j <= xmax - 4:
+        elif (j <= xmax - 4) & (threadCount >= 4):
             p1 = multiprocessing.Process(target=calcPix, args=(i,j,pixels,t1,t2,t3)) # Creating processes
             p2 = multiprocessing.Process(target=calcPix, args=(i,j+1,pixels,t4,t5,t6)) 
             p3 = multiprocessing.Process(target=calcPix, args=(i,j+2,pixels,t7,t8,t9))
@@ -198,7 +206,7 @@ while i <= ymax - 1:
             pixels[i][j+3] = [t10.value,t11.value,t12.value]
             
             j+=3
-        elif j <= im_dim - 3:
+        elif (j <= im_dim - 3) & (threadCount >= 3):
             p1 = multiprocessing.Process(target=calcPix, args=(i,j,pixels,t1,t2,t3)) # Creating processes
             p2 = multiprocessing.Process(target=calcPix, args=(i,j+1,pixels,t4,t5,t6)) 
             p3 = multiprocessing.Process(target=calcPix, args=(i,j+2,pixels,t7,t8,t9))
@@ -215,7 +223,7 @@ while i <= ymax - 1:
             pixels[i][j+1] = [t4.value,t5.value,t6.value]
             pixels[i][j+2] = [t7.value,t8.value,t9.value]
             j+=2
-        elif j <= im_dim - 2:
+        elif (j <= im_dim - 2) & (threadCount >= 2):
             p1 = multiprocessing.Process(target=calcPix, args=(i,j,pixels,t1,t2,t3)) # Creating processes
             p2 = multiprocessing.Process(target=calcPix, args=(i,j+1,pixels,t4,t5,t6))
             
