@@ -10,4 +10,4 @@ cd DoublePendulum
 
 sudo install.sh
 
-Then you can run the imgGenMPv2.py or imgGenMPZoom.py scripts as normal user. Please note that the first argument is the resolution to the map, and the second argument is a multiplier for how long it will simulate before skipping that spot and moving on. 
+Then you can run the imgGenMPv2.py or imgGenMPZoom.py scripts as normal user. Please note that the first argument is the resolution to the map, the second argument is a multiplier for how long it will simulate before skipping that spot and moving on (defaults to 1 if not specified), and the third argument is the number of processing threads to use (defaults to multiprocessing.cpu_count() if not specified). 
