@@ -27,7 +27,7 @@ def LR(T1, T2, w1, w2):
 def main():
     clock = pygame.time.Clock()
     # denominator of h is the frame rate in fps
-    h = 1/120
+    h = 1/240
 
     input_path = "outputs/doot1000MT1.png"
 

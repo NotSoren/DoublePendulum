@@ -84,18 +84,22 @@ if len(args) >= 4:
     im_dim = int(re.sub('[^0-9]', '', args[1]))
     mult = int(re.sub('[^0-9]', '', args[2]))
     threadCount = int(re.sub('[^0-9]', '', args[3]))
+    print(threadCount)
 elif len(args) >= 3:
     im_dim = int(re.sub('[^0-9]', '', args[1]))
     mult = int(re.sub('[^0-9]', '', args[2]))
-    threadCount = 4
+    threadCount = multiprocessing.cpu_count()
+    print(threadCount)
 elif len(args) >= 2:
     im_dim = int(re.sub('[^0-9]', '', args[1]))
     mult = 1 
-    threadCount = 4
+    threadCount = multiprocessing.cpu_count()
+    print(threadCount)
 else:
     im_dim = 75
     mult = 1
-    threadCount = 4
+    threadCount = multiprocessing.cpu_count()
+    print(threadCount)
 
 pixels = np.zeros((im_dim, im_dim, 3))
 pixels = pixels.astype(int)
@@ -269,7 +273,6 @@ while i <= ymax - 1:
     im3.save("outputs/tmp2.png")
     """
     i+=1
-    gc.collect()
 
 pixels = pixels.tolist()
 pixels = [item for sublist in pixels for item in sublist]
@@ -280,3 +283,4 @@ name = "outputs/doot"+str(im_dim)+"MT"+str(mult)+".png"
 #name = "outputs/doot"+str(im_dim)+"MT.png"
 im2.save(name)
  
+gc.collect()

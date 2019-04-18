@@ -70,15 +70,22 @@ def calcPix(i1,j1,out1,out2,out3):
     out3.value = pixel[2]
 
 args = sys.argv
-if len(args) >= 3:
+if len(args) >= 4:
     im_dim = int(re.sub('[^0-9]', '', args[1]))
-    mult = float(re.sub('[^0-9.]', '', args[2]))
+    mult = int(re.sub('[^0-9]', '', args[2]))
+    threadCount = int(re.sub('[^0-9]', '', args[3]))
+elif len(args) >= 3:
+    im_dim = int(re.sub('[^0-9]', '', args[1]))
+    mult = int(re.sub('[^0-9]', '', args[2]))
+    threadCount = multiprocessing.cpu_count()
 elif len(args) >= 2:
     im_dim = int(re.sub('[^0-9]', '', args[1]))
-    mult = 1
+    mult = 1 
+    threadCount = multiprocessing.cpu_count()
 else:
     im_dim = 75
     mult = 1
+    threadCount = multiprocessing.cpu_count()
 
 xmin = int(0.4 * im_dim)
 xmax = int(.6 * im_dim)
@@ -138,7 +145,7 @@ while i <= yr - 1:
     j=0
     start = time.time()
     while j <= xr - 1:
-        if j <= xr - 8:
+        if (j <= xr - 8) & (threadCount >= 8):
             p1 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin,t1,t2,t3)) # Creating processes
             p2 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin+1,t4,t5,t6)) 
             p3 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin+2,t7,t8,t9))
@@ -175,7 +182,7 @@ while i <= yr - 1:
             pixels[i][j+6] = [t19.value,t20.value,t21.value]
             pixels[i][j+7] = [t22.value,t23.value,t24.value]
             j+=7
-        elif j <= xr - 4:
+        elif (j <= xr - 4) & (threadCount >= 4):
             p1 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin,t1,t2,t3)) # Creating processes
             p2 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin+1,t4,t5,t6)) 
             p3 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin+2,t7,t8,t9))
@@ -197,7 +204,7 @@ while i <= yr - 1:
             pixels[i][j+3] = [t10.value,t11.value,t12.value]
             #print("done")
             j+=3
-        elif j <= xr - 2:
+        elif (j <= xr - 2) & (threadCount >= 2):
             p1 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin,t1,t2,t3)) # Creating processes
             p2 = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin+1,t4,t5,t6))
             #print(j,"-",j+1,end=": ")
