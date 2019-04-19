@@ -81,6 +81,7 @@ def calcPix(i1,j1,pixels,out1,out2,out3):
     out1.value = pixels[i1][j1][0]
     out2.value = pixels[i1][j1][1]
     out3.value = pixels[i1][j1][2]
+    gc.collect()
     
 args = sys.argv
 if len(args) >= 4:
@@ -188,7 +189,7 @@ while i <= ymax - 1:
             p6 = multiprocessing.Process(target=calcPix, args=(i,j+5,pixels,t16,t17,t18))
             p7 = multiprocessing.Process(target=calcPix, args=(i,j+6,pixels,t19,t20,t21))
             p8 = multiprocessing.Process(target=calcPix, args=(i,j+7,pixels,t22,t23,t24))
-            p9 = multiprocessing.Process(target=calcPix, args=(i,j+8,pixels,t01,t02,t03)) # Creating processes
+            p9 = multiprocessing.Process(target=calcPix, args=(i,j+8,pixels,t01,t02,t03))
             p10 = multiprocessing.Process(target=calcPix, args=(i,j+9,pixels,t04,t05,t06)) 
             p11 = multiprocessing.Process(target=calcPix, args=(i,j+10,pixels,t07,t08,t09))
             p12 = multiprocessing.Process(target=calcPix, args=(i,j+11,pixels,t010,t011,t012))
@@ -214,7 +215,7 @@ while i <= ymax - 1:
             p15.start()
             p16.start()
             
-            p1.join()
+            p1.join() # Waiting for processes to finish
             p2.join()
             p3.join()
             p4.join()
