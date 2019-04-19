@@ -29,7 +29,10 @@ def calcPix(i1,j1,pixels,out1,out2,out3):
 
     Th_1 = (i1 / im_dim) * pi2
     Th_2 = (j1 / im_dim) * pi2
-    if (3*math.cos(Th_1) + math.cos(Th_2) < -2):
+    i2 = i1 / im_dim 
+    j2 = j1 / im_dim
+    
+    if (3*math.cos(Th_1) + 1.2*math.cos(Th_2) < -1.82) | (.286<=j2<=.341) & (.265<=i2<=.372) | (.662<=j2<=.715) & (.667<=i2<=.742):
         out1.value = 255
         out2.value = 255
         out3.value = 255
@@ -82,12 +85,12 @@ def calcPix(i1,j1,pixels,out1,out2,out3):
 args = sys.argv
 if len(args) >= 4:
     im_dim = int(re.sub('[^0-9]', '', args[1]))
-    mult = int(re.sub('[^0-9]', '', args[2]))
+    mult = float(re.sub('[^0-9.]', '', args[2]))
     threadCount = int(re.sub('[^0-9]', '', args[3]))
     print(threadCount)
 elif len(args) >= 3:
     im_dim = int(re.sub('[^0-9]', '', args[1]))
-    mult = int(re.sub('[^0-9]', '', args[2]))
+    mult = float(re.sub('[^0-9.]', '', args[2]))
     threadCount = multiprocessing.cpu_count()*2
     print(threadCount)
 elif len(args) >= 2:
@@ -341,12 +344,12 @@ while i <= ymax - 1:
     feh --force-aliasing -ZR 1 -g 800x800 tmp2.png
     """
     
-    #pixel2 = pixels.tolist()
-    #pixel2 = [item for sublist in pixel2 for item in sublist]
-    #pixel2 = [tuple(l) for l in pixel2]
-    #im3 = Image.new("RGB", (im_dim, im_dim))
-    #im3.putdata(pixel2)
-    #im3.save("outputs/tmp2.png")
+    pixel2 = pixels.tolist()
+    pixel2 = [item for sublist in pixel2 for item in sublist]
+    pixel2 = [tuple(l) for l in pixel2]
+    im3 = Image.new("RGB", (im_dim, im_dim))
+    im3.putdata(pixel2)
+    im3.save("outputs/tmp2.png")
     
     i+=1
 
@@ -355,7 +358,7 @@ pixels = [item for sublist in pixels for item in sublist]
 pixels = [tuple(l) for l in pixels]
 im2 = Image.new("RGB", (im_dim, im_dim))
 im2.putdata(pixels)
-name = "outputs/doot"+str(im_dim)+"MT"+str(mult)+".png"
+name = "outputs/doot"+str(im_dim)+"MT"+re.sub('[.]', '_', str(mult))+".png"
 #name = "outputs/doot"+str(im_dim)+"MT.png"
 im2.save(name)
  
