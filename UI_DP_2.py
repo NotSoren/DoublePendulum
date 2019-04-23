@@ -4,7 +4,7 @@ import os
 from pygame import gfxdraw
 
 # global variable for the screen dimensions
-screen_dim = (800,400)
+screen_dim = (1200,400)
 x_half = int(round(screen_dim[1] / 2))
 
 # global math variables
@@ -37,14 +37,14 @@ def main():
 
     # create a surface on screen that has the size of screen_dim
     screen = pygame.display.set_mode(screen_dim)
-
+    screen.fill((255,255,255))
     # get the theta map
     theta_map = pygame.image.load(os.path.join(input_path))
     theta_map = pygame.transform.scale(theta_map, (screen_dim[1], screen_dim[1]))
     theta_map = pygame.transform.rotate(theta_map, 90)
     theta_map = pygame.transform.flip(theta_map, True, False)
     theta_map.convert()
-
+    
     # draw it
     screen.blit(theta_map, (screen_dim[1], 0))
 
@@ -79,13 +79,14 @@ def main():
     pygame.draw.circle(screen, (0, 0, 0), (x_2, y_2), 4)
 
     current_mouse = pygame.mouse.get_pos()
-
+    
     # main loop
     while running:
-
+        
         # check to see if the mouse has been moved
         mouse_pos = pygame.mouse.get_pos()
         if mouse_pos != current_mouse:
+            screen.fill((255,255,255))
             screen.blit(theta_map, (screen_dim[1], 0))
             Th_1 = ((mouse_pos[0] - screen_dim[1]) / screen_dim[1]) * pi2
             Th_2 = ((mouse_pos[1] - screen_dim[1]) / screen_dim[1]) * pi2
@@ -94,13 +95,13 @@ def main():
             a_2 = 0
 
             current_mouse = mouse_pos
-
+        
         # draw trail
         trail_x = int(round(((Th_1) * screen_dim[1] / pi2)%400 + screen_dim[1]))
         trail_y = int(round(((Th_2) * screen_dim[1] / pi2) + screen_dim[1]))
-
+        
         trail_y = trail_y % 400
-
+        pygame.draw.rect(screen, (0, 200, 0),(x_2+799, y_2-1, 3, 3))
         pygame.draw.rect(screen, (0, 200, 0),(trail_x-1, trail_y-1, 3, 3))
 
         pygame.draw.rect(screen,(255, 255, 255),(0,0,screen_dim[1],screen_dim[1]))
