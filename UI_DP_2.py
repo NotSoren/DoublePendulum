@@ -156,12 +156,13 @@ def main():
         pygame.gfxdraw.aacircle(screen, x_2, y_2, 4, (255, 255, 255))
         #speed = myfont.render(vel(x_2,y_2,x_p,y_p), False, (255, 255, 255))
         
-        if place%2==0:
-            curr_speed = vel(x_2,y_2,x_p,y_p,h)
+        
+        curr_speed = vel(x_2,y_2,x_p,y_p,h)
         if curr_speed != speed: 
             os.system('cls' if os.name == 'nt' else 'clear')
             print(curr_speed)
             speed = curr_speed
+            print(x_2,y_2)
             
         x_p = x_2
         y_p = y_2
