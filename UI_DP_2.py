@@ -119,7 +119,7 @@ def main():
         pygame.draw.rect(screen, (0, 200, 0),(trail_x+1, trail_y+1, 3, 3))
         
         pygame.draw.rect(screen,(0, 0, 0),(0,0,screen_dim[1],screen_dim[1]))
-        #clock.tick(1/h)
+        clock.tick(1/h)
         # event handling, gets all event from the event queue
         for event in pygame.event.get():
             # only do something if the event is of type QUIT
