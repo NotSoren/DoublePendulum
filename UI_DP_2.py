@@ -76,8 +76,8 @@ def main():
     x_1 = x_half + int(round(math.sin(Th_1)*pen_scr_length))
     y_1 = x_half + int(round(-math.cos(Th_1)*pen_scr_length))
 
-    x_2 = x_half + int(round(math.sin(Th_1)*pen_scr_length + math.sin(Th_2)*pen_scr_length))
-    y_2 = x_half + int(round(-math.cos(Th_1)*pen_scr_length - math.cos(Th_2)*pen_scr_length))
+    x_2 = x_half + int(math.sin(Th_1)*pen_scr_length + math.sin(Th_2)*pen_scr_length)
+    y_2 = x_half + int(-math.cos(Th_1)*pen_scr_length - math.cos(Th_2)*pen_scr_length)
 
     x_p = x_2
     y_p = y_2
@@ -108,17 +108,18 @@ def main():
             current_mouse = mouse_pos
         
         # draw trail
-        trail_x = int(round(((Th_1) * screen_dim[1] / pi2)%400 + screen_dim[1]))
-        trail_y = int(round(((Th_2) * screen_dim[1] / pi2) + screen_dim[1]))
+        trail_x = ((Th_1) * screen_dim[1] / pi2)%400 + screen_dim[1]
+        trail_y = ((Th_2) * screen_dim[1] / pi2) + screen_dim[1]
         
         trail_y = trail_y % 400
+        pygame.draw.rect(screen, (0, 0, 0),(x_2+799, y_2-1, 3, 3))
         pygame.draw.rect(screen, ((x_2/1.4)%255, 0, (y_2/1.4)%255),(x_2+799, y_2-1, 3, 3))
         
         #pygame.draw.rect(screen, (0, 0, 0),(trail_x-1, trail_y-1, 4, 4))
         pygame.draw.rect(screen, (0, 200, 0),(trail_x+1, trail_y+1, 3, 3))
         
         pygame.draw.rect(screen,(0, 0, 0),(0,0,screen_dim[1],screen_dim[1]))
-        clock.tick(1/h)
+        #clock.tick(1/h)
         # event handling, gets all event from the event queue
         for event in pygame.event.get():
             # only do something if the event is of type QUIT
@@ -146,23 +147,22 @@ def main():
         x_1 = x_half + int(round(math.sin(Th_1)*pen_scr_length))
         y_1 = x_half + int(round(-math.cos(Th_1)*pen_scr_length))
         
-        x_2 = x_half + int(round(math.sin(Th_1)*pen_scr_length + math.sin(Th_2)*pen_scr_length))
-        y_2 = x_half + int(round(-math.cos(Th_1)*pen_scr_length - math.cos(Th_2)*pen_scr_length))
+        x_2 = x_half + int(math.sin(Th_1)*pen_scr_length + math.sin(Th_2)*pen_scr_length)
+        y_2 = x_half + int(-math.cos(Th_1)*pen_scr_length - math.cos(Th_2)*pen_scr_length)
         
         pygame.gfxdraw.aacircle(screen, x_half, x_half, 4, (255, 255, 255))
         pygame.draw.aaline(screen, (255, 255, 255), (x_half, x_half), (x_1, y_1), True)
         pygame.gfxdraw.aacircle(screen, x_1, y_1, 4, (255, 255, 255))
         pygame.draw.aaline(screen, (255, 255, 255), (x_1, y_1), (x_2, y_2), True)
         pygame.gfxdraw.aacircle(screen, x_2, y_2, 4, (255, 255, 255))
-        #speed = myfont.render(vel(x_2,y_2,x_p,y_p), False, (255, 255, 255))
         
         
-        curr_speed = vel(x_2,y_2,x_p,y_p,h)
-        if curr_speed != speed: 
-            os.system('cls' if os.name == 'nt' else 'clear')
-            print(curr_speed)
-            speed = curr_speed
-            print(x_2,y_2)
+        #curr_speed = vel(x_2,y_2,x_p,y_p,h)
+        #if curr_speed != speed: 
+            #os.system('cls' if os.name == 'nt' else 'clear')
+            #print(curr_speed)
+            #speed = curr_speed
+            #print(x_2,y_2)
             
         x_p = x_2
         y_p = y_2
