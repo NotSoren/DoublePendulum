@@ -111,55 +111,10 @@ left = 1
 pi2 = 2 * math.pi
 
 # Declaring variables to be treated as pointers for multiprocessing. Yes, it's ugly. Get over it. 
-t1 = multiprocessing.Value('i')
-t2 = multiprocessing.Value('i')
-t3 = multiprocessing.Value('i')
-t4 = multiprocessing.Value('i')
-t5 = multiprocessing.Value('i')
-t6 = multiprocessing.Value('i')
-t7 = multiprocessing.Value('i')
-t8 = multiprocessing.Value('i')
-t9 = multiprocessing.Value('i')
-t10 = multiprocessing.Value('i')
-t11 = multiprocessing.Value('i')
-t12 = multiprocessing.Value('i')
-t13 = multiprocessing.Value('i')
-t14 = multiprocessing.Value('i')
-t15 = multiprocessing.Value('i')
-t16 = multiprocessing.Value('i')
-t17 = multiprocessing.Value('i')
-t18 = multiprocessing.Value('i')
-t19 = multiprocessing.Value('i')
-t20 = multiprocessing.Value('i')
-t21 = multiprocessing.Value('i')
-t22 = multiprocessing.Value('i')
-t23 = multiprocessing.Value('i')
-t24 = multiprocessing.Value('i')
-t01 = multiprocessing.Value('i')
-t02 = multiprocessing.Value('i')
-t03 = multiprocessing.Value('i')
-t04 = multiprocessing.Value('i')
-t05 = multiprocessing.Value('i')
-t06 = multiprocessing.Value('i')
-t07 = multiprocessing.Value('i')
-t08 = multiprocessing.Value('i')
-t09 = multiprocessing.Value('i')
-t010 = multiprocessing.Value('i')
-t011 = multiprocessing.Value('i')
-t012 = multiprocessing.Value('i')
-t013 = multiprocessing.Value('i')
-t014 = multiprocessing.Value('i')
-t015 = multiprocessing.Value('i')
-t016 = multiprocessing.Value('i')
-t017 = multiprocessing.Value('i')
-t018 = multiprocessing.Value('i')
-t019 = multiprocessing.Value('i')
-t020 = multiprocessing.Value('i')
-t021 = multiprocessing.Value('i')
-t022 = multiprocessing.Value('i')
-t023 = multiprocessing.Value('i')
-t024 = multiprocessing.Value('i')
-
+for i in range(1,25):
+    #print(i)
+    exec("t"+str(i)+" = multiprocessing.Value('i')")
+    exec("t0"+str(i)+" = multiprocessing.Value('i')")
 
 xmin = 0
 xmax = im_dim
@@ -197,39 +152,11 @@ while i <= ymax - 1:
             p15 = multiprocessing.Process(target=calcPix, args=(i,j+14,pixels,t019,t020,t021))
             p16 = multiprocessing.Process(target=calcPix, args=(i,j+15,pixels,t022,t023,t024))
             
-            p1.start() # Starting Processes
-            p2.start()
-            p3.start()
-            p4.start()
-            p5.start()
-            p6.start()
-            p7.start()
-            p8.start()
-            p9.start()
-            p10.start()
-            p11.start()
-            p12.start()
-            p13.start()
-            p14.start()
-            p15.start()
-            p16.start()
+            for q in range(1,17):
+                exec("p"+str(q)+".start()")
             
-            p1.join()
-            p2.join()
-            p3.join()
-            p4.join()
-            p5.join()
-            p6.join()
-            p7.join()
-            p8.join()
-            p9.join()
-            p10.join()
-            p11.join()
-            p12.join()
-            p13.join()
-            p14.join()
-            p15.join()
-            p16.join()
+            for q in range(1,17):
+                exec("p"+str(q)+".join()")
 
             pixels[i][j] = [t1.value,t2.value,t3.value]
             pixels[i][j+1] = [t4.value,t5.value,t6.value]
@@ -258,23 +185,11 @@ while i <= ymax - 1:
             p7 = multiprocessing.Process(target=calcPix, args=(i,j+6,pixels,t19,t20,t21))
             p8 = multiprocessing.Process(target=calcPix, args=(i,j+7,pixels,t22,t23,t24))
             
-            p1.start() # Starting Processes
-            p2.start()
-            p3.start()
-            p4.start()
-            p5.start()
-            p6.start()
-            p7.start()
-            p8.start()
-
-            p1.join() # Waiting for processes to finish
-            p2.join()
-            p3.join()
-            p4.join()
-            p5.join()
-            p6.join()
-            p7.join()
-            p8.join()
+            for q in range(1,9):
+                exec("p"+str(q)+".start()")
+            
+            for q in range(1,9):
+                exec("p"+str(q)+".join()")
 
             pixels[i][j] = [t1.value,t2.value,t3.value]
             pixels[i][j+1] = [t4.value,t5.value,t6.value]
