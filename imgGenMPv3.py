@@ -130,6 +130,7 @@ while i <= ymax - 1:
             print(" ",end="")
     j=xmin
     start = time.time()
+    if (i == 0): j+=1; print('  ',end=''); pixels[0][0] = [255,255,255]
     while j <= xmax - 1:
         threads = min(threadCount,(xmax - j))
         for q in range(1,threads+1): # generate process targets
