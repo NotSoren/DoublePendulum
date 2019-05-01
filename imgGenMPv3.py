@@ -37,7 +37,7 @@ def calcPix(i1,j1,pixels,out1,out2,out3):
         out2.value = 255
         out3.value = 255
         #print(colored(format(j1),"yellow"),end=" ")
-        print('  ',end='')
+        print('__',end='')
         return
 
     cap = 10000*mult
@@ -87,22 +87,21 @@ if len(args) >= 4:
     im_dim = int(re.sub('[^0-9]', '', args[1]))
     mult = float(re.sub('[^0-9.]', '', args[2]))
     threadCount = int(re.sub('[^0-9]', '', args[3]))
-    print(threadCount)
 elif len(args) >= 3:
     im_dim = int(re.sub('[^0-9]', '', args[1]))
     mult = float(re.sub('[^0-9.]', '', args[2]))
     threadCount = multiprocessing.cpu_count()*2
-    print(threadCount)
 elif len(args) >= 2:
     im_dim = int(re.sub('[^0-9]', '', args[1]))
     mult = 1 
     threadCount = multiprocessing.cpu_count()*2
-    print(threadCount)
 else:
     im_dim = 100
     mult = 1
     threadCount = multiprocessing.cpu_count()*2
-    print(threadCount)
+
+threadCount = min(im_dim, threadCount) 
+print(threadCount)
 
 pixels = np.zeros((im_dim, im_dim, 3))
 pixels = pixels.astype(int)
@@ -110,11 +109,9 @@ pixels = pixels.astype(int)
 left = 1
 pi2 = 2 * math.pi
 
-# Declaring variables to be treated as pointers for multiprocessing. Yes, it's ugly. Get over it. 
+# Declaring variables to be treated as pointers for multiprocessing. 
 for i in range(1,threadCount*3+1):
-    #print(i)
     exec("t"+str(i)+" = multiprocessing.Value('i')")
-    exec("t0"+str(i)+" = multiprocessing.Value('i')")
 
 xmin = 0
 xmax = im_dim
@@ -135,7 +132,6 @@ while i <= ymax - 1:
     start = time.time()
     while j <= xmax - 1:
         threads = min(threadCount,(xmax - j))
-        #if (j <= xmax - 16) & (threadCount >= 16):
         for q in range(1,threads+1): # generate process targets
             exec("p"+str(q)+" = multiprocessing.Process(target=calcPix, args=(i,j+"+str(q-1)+",pixels,t"+str((q-1)*3+1)+",t"+str((q-1)*3+2)+",t"+str((q-1)*3+3)+"))")
         
@@ -149,20 +145,20 @@ while i <= ymax - 1:
         j+=threads
         end = time.time()
     print(round((end-start)*100)/100)
+    i+=1
     """
     Comment out the next 5 lines to disable outputting to tmp2.png every line. This is recommended unless
     you're running the below command at the same time. That only works on linux, btw. 
     feh --force-aliasing -ZR 1 -g 800x800 tmp2.png
     """
-    
+    """
     pixel2 = pixels.tolist()
     pixel2 = [item for sublist in pixel2 for item in sublist]
     pixel2 = [tuple(l) for l in pixel2]
     im3 = Image.new("RGB", (im_dim, im_dim))
     im3.putdata(pixel2)
     im3.save("outputs/tmp2.png")
-    
-    i+=1
+    """
 
 pixels = pixels.tolist()
 pixels = [item for sublist in pixels for item in sublist]
