@@ -20,7 +20,9 @@ def LR(T1, T2, w1, w2):
     #gc.collect()
     return np.array([w1, w2, a1, a2])
 
-def stepToPix(step, mult, pixels, i1, j1):
+def stepToPix(step1,mult):
+    step = step1.value
+    #print(step,end=',')
     if step >= 10000*mult:
         print('  ',end='')
         return (255, 255, 255)
@@ -38,7 +40,7 @@ def stepToPix(step, mult, pixels, i1, j1):
         return [int(round(l*step/10/mult)) for l in (0, 255, 0)]
 
 
-def calcPix(i1,j1,pixels,out1,out2,out3):
+def calcPix(i1,j1,out1):
     pi2 = 2 * math.pi
     step = 0
     h = 0.01
@@ -50,15 +52,12 @@ def calcPix(i1,j1,pixels,out1,out2,out3):
     i2 = i1 / im_dim 
     j2 = j1 / im_dim
     
-    if (3*math.cos(Th_1) + 1.2*math.cos(Th_2) < -1.82) | (.286<=j2<=.341) & (.265<=i2<=.372) | (.662<=j2<=.715) & (.667<=i2<=.742):
-        out1.value = 255
-        out2.value = 255
-        out3.value = 255
-        #print(colored(format(j1),"yellow"),end=" ")
-        print('__',end='')
+    cap = 10000*mult
+    
+    if (3*math.cos(Th_1) + math.cos(Th_2) < -2) | (.286<=j2<=.341) & (.265<=i2<=.372) | (.662<=j2<=.715) & (.667<=i2<=.742):
+        out1.value = int(cap)
         return
 
-    cap = 10000*mult
     while abs((Th_1%(pi2)) - ((Th_2+math.pi)%(pi2))) > 0.03407:            
         current_state = [Th_1, Th_2, a_1, a_2]
         k1 = LR(*current_state)
@@ -74,32 +73,11 @@ def calcPix(i1,j1,pixels,out1,out2,out3):
         a_2 += R[3]
         step += 1
         if step >= cap:
-            break
-    #print(i1,j1,"s:", step)
-    if step >= 10000*mult:
-        pixels[i1][j1] = (255, 255, 255)
-        #print(j1,end=" ")
-        print('  ',end='')
-    elif step > 1000*mult:
-        pixels[i1][j1] = [int(round(l*step/10000/mult)) for l in (0, 0, 255)]
-        #print(colored(format(j1),'blue'),end=" ")
-        print('░░',end='')
-    elif step > 100*mult:
-        pixels[i1][j1] = [int(round(l*step/1000/mult)) for l in (255, 0, 255)]
-        #print(colored(format(j1),'magenta'),end=" ")
-        print('▒▒',end='')
-    elif step > 10*mult:
-        pixels[i1][j1] = [int(round(l*step/100/mult)) for l in (255, 0, 0)]
-        #print(colored(format(j1),'red'),end=" ")
-        print('▓▓',end='')
-    else:
-        pixels[i1][j1] = [int(round(l*step/10/mult)) for l in (0, 255, 0)]
-        #print(colored(format(j1),'green'),end=" ")
-        print('██',end='')
-    out1.value = pixels[i1][j1][0]
-    out2.value = pixels[i1][j1][1]
-    out3.value = pixels[i1][j1][2]
-
+            out1.value = step
+            return
+        out1.value = step
+        
+        
 args = sys.argv
 if len(args) >= 4:
     im_dim = int(re.sub('[^0-9]', '', args[1]))
@@ -128,7 +106,7 @@ left = 1
 pi2 = 2 * math.pi
 
 # Declaring variables to be treated as pointers for multiprocessing. 
-for i in range(1,threadCount*3+1):
+for i in range(1,threadCount+1):
     exec("t"+str(i)+" = multiprocessing.Value('i')")
 
 xmin = 0
@@ -152,7 +130,7 @@ while i <= ymax - 1:
     while j <= xmax - 1:
         threads = min(threadCount,(xmax - j))
         for q in range(1,threads+1): # generate process targets
-            exec("p"+str(q)+" = multiprocessing.Process(target=calcPix, args=(i,j+"+str(q-1)+",pixels,t"+str((q-1)*3+1)+",t"+str((q-1)*3+2)+",t"+str((q-1)*3+3)+"))")
+            exec("p"+str(q)+" = multiprocessing.Process(target=calcPix, args=(i,j+"+str(q-1)+",t"+str(q)+"))")
         
         for q in range(1,threads+1): # start processes
             exec("p"+str(q)+".start()")
@@ -160,9 +138,9 @@ while i <= ymax - 1:
             exec("p"+str(q)+".join()")
             
         for q in range(1,threads+1): # save pixel values
-            exec("pixels[i][j+"+str(q-1)+"] = [t"+str((q-1)*3+1)+".value,t"+str((q-1)*3+2)+".value,t"+str((q-1)*3+3)+".value]")
+            exec("pixels[i][j+"+str(q-1)+"] = stepToPix(t"+str(q)+",mult)")
         j+=threads
-        end = time.time()
+    end = time.time()
     print(round((end-start)*100)/100)
     i+=1
     """
