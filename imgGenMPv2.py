@@ -81,7 +81,8 @@ def calcPix(i1,j1,pixels,out1,out2,out3):
     out1.value = pixels[i1][j1][0]
     out2.value = pixels[i1][j1][1]
     out3.value = pixels[i1][j1][2]
-    
+
+total_start = time.time()
 args = sys.argv
 if len(args) >= 4:
     im_dim = int(re.sub('[^0-9]', '', args[1]))
@@ -316,5 +317,6 @@ im2.putdata(pixels)
 name = "outputs/doot"+str(im_dim)+"MT"+re.sub('[.]', '_', str(mult))+".png"
 #name = "outputs/doot"+str(im_dim)+"MT.png"
 im2.save(name)
- 
+end = time.time()
+print('time: ',round((end-total_start)*1000)/1000,'s')
 gc.collect()
