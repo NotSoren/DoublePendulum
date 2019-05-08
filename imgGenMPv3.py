@@ -189,5 +189,5 @@ name = "outputs/doot"+str(im_dim)+"MT"+re.sub('[.]', '_', str(mult))+".png"
 #name = "outputs/doot"+str(im_dim)+"MT.png"
 im2.save(name)
 end = time.time()
-print('time: ',round((end-total_start)*1000)/1000,'s') 
+print('time:',round((end-total_start)*1000)/1000,'s') 
 gc.collect()
