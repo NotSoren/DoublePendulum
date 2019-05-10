@@ -69,7 +69,7 @@ def calcPix(i):
         a_1 += R[2]
         a_2 += R[3]
         step += 1
-        if step >= cap:return(step)
+        if step >= cap:return(-1)
     return(step)
 
 total_start = time.time()
@@ -96,11 +96,8 @@ print(threadCount)
 n = im_dim
 m = im_dim
 d = 0
-#a = [[0] * m for i in range(n)]
-b = [[d] * m for i in range(n)]
 
-#y = int(i / im_dim) # y
-#x = i % im_dim # x
+b = [[d] * m for i in range(n)]
 
 steps_count = np.zeros((im_dim, im_dim))
 steps_count = steps_count.astype(int)
