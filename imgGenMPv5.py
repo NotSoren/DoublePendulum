@@ -92,7 +92,9 @@ if __name__ == '__main__':
         mult = 1
         threadCount = multiprocessing.cpu_count()*2
     
+    threadCount = min(threadCount,1010)
     print(threadCount)
+    
     
     n = im_dim
     
