@@ -69,96 +69,97 @@ def calcPix(i1,j1,out1,out2,out3):
     out2.value = pixel[1]
     out3.value = pixel[2]
 
-args = sys.argv
-if len(args) >= 4:
-    im_dim = int(re.sub('[^0-9]', '', args[1]))
-    mult = int(re.sub('[^0-9]', '', args[2]))
-    threadCount = int(re.sub('[^0-9]', '', args[3]))
-elif len(args) >= 3:
-    im_dim = int(re.sub('[^0-9]', '', args[1]))
-    mult = int(re.sub('[^0-9]', '', args[2]))
-    threadCount = multiprocessing.cpu_count()
-elif len(args) >= 2:
-    im_dim = int(re.sub('[^0-9]', '', args[1]))
-    mult = 1 
-    threadCount = multiprocessing.cpu_count()
-else:
-    im_dim = 75
-    mult = 1
-    threadCount = multiprocessing.cpu_count()
+if __name__ == '__main__':
+    args = sys.argv
+    if len(args) >= 4:
+        im_dim = int(re.sub('[^0-9]', '', args[1]))
+        mult = int(re.sub('[^0-9]', '', args[2]))
+        threadCount = int(re.sub('[^0-9]', '', args[3]))
+    elif len(args) >= 3:
+        im_dim = int(re.sub('[^0-9]', '', args[1]))
+        mult = int(re.sub('[^0-9]', '', args[2]))
+        threadCount = multiprocessing.cpu_count()
+    elif len(args) >= 2:
+        im_dim = int(re.sub('[^0-9]', '', args[1]))
+        mult = 1 
+        threadCount = multiprocessing.cpu_count()
+    else:
+        im_dim = 75
+        mult = 1
+        threadCount = multiprocessing.cpu_count()
 
-xmin = int(0.86 * im_dim)
-xmax = int(.956 * im_dim)
-ymin = int(0.6 * im_dim)
-ymax = int(.7 * im_dim)
+    xmin = int(0.86 * im_dim)
+    xmax = int(.956 * im_dim)
+    ymin = int(0.6 * im_dim)
+    ymax = int(.7 * im_dim)
 
-"""
-xmin = 0
-xmax = im_dim
-ymin = 0
-ymax = im_dim
-"""
+    """
+    xmin = 0
+    xmax = im_dim
+    ymin = 0
+    ymax = im_dim
+    """
 
-xr = xmax - xmin
-yr = ymax - ymin
-print(xr,yr)
-pixels = np.zeros((yr, xr, 3)) # This will have to be edited to allow for weird values of xmin,ymin,xmax,ymax.
-pixels = pixels.astype(int)
-    
-
-left = 1
-pi2 = 2 * math.pi
-
-# Declaring variables to be treated as pointers for multiprocessing. Yes, it's ugly. Get over it. 
-for i in range(1,threadCount*3+1):
-    exec("t"+str(i)+" = multiprocessing.Value('i')")
-
-
-print("Running between X=",xmin,xmax)
-print("Running between Y=",ymin,ymax)
-threadCount = min(xr, threadCount) 
-i=0
-while i <= yr - 1:
-    print(i,end=": ")
-    j=0
-    start = time.time()
-    while j <= xr - 1:
-        threads = min(threadCount,(xmax - j))
-        for q in range(1,threads+1): # generate process targets
-            exec("p"+str(q)+" = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin+"+str(q-1)+",t"+str((q-1)*3+1)+",t"+str((q-1)*3+2)+",t"+str((q-1)*3+3)+"))")
+    xr = xmax - xmin
+    yr = ymax - ymin
+    print(xr,yr)
+    pixels = np.zeros((yr, xr, 3)) # This will have to be edited to allow for weird values of xmin,ymin,xmax,ymax.
+    pixels = pixels.astype(int)
         
-        for q in range(1,threads+1): # start processes
-            exec("p"+str(q)+".start()")
-        for q in range(1,threads+1): # join processes
-            exec("p"+str(q)+".join()")
-            
-        for q in range(1,threads+1): # save pixel values
-            exec("pixels[i][j+"+str(q-1)+"] = [t"+str((q-1)*3+1)+".value,t"+str((q-1)*3+2)+".value,t"+str((q-1)*3+3)+".value]")
-        j+=threads
-        end = time.time()
-    print(round((end-start)*100)/100)
-    """
-    Comment out the next 5 lines to disable outputting to tmp2.png every line. This is recommended unless
-    you're running 
-    feh --force-aliasing -ZR 1 -g 800x800 tmp2.png
-    at the same time. That only works on linux, btw. 
-    """
-    
-    pixel2 = pixels.tolist()
-    pixel2 = [item for sublist in pixel2 for item in sublist]
-    pixel2 = [tuple(l) for l in pixel2]
-    im3 = Image.new("RGB", (xr, yr))
-    im3.putdata(pixel2)
-    im3.save("outputs/tmp2.png")
-    
-    i+=1
 
-pixels = pixels.tolist()
-pixels = [item for sublist in pixels for item in sublist]
-pixels = [tuple(l) for l in pixels]
-im2 = Image.new("RGB", (xr, yr))
-im2.putdata(pixels)
-name = "outputs/doot"+str(im_dim)+"Z"+str(mult)+".png"
-#name = "outputs/doot"+str(im_dim)+"MTZoom.png"
-im2.save(name)
- 
+    left = 1
+    pi2 = 2 * math.pi
+
+    # Declaring variables to be treated as pointers for multiprocessing. Yes, it's ugly. Get over it. 
+    for i in range(1,threadCount*3+1):
+        exec("t"+str(i)+" = multiprocessing.Value('i')")
+
+
+    print("Running between X=",xmin,xmax)
+    print("Running between Y=",ymin,ymax)
+    threadCount = min(xr, threadCount) 
+    i=0
+    while i <= yr - 1:
+        print(i,end=": ")
+        j=0
+        start = time.time()
+        while j <= xr - 1:
+            threads = min(threadCount,(xmax - j))
+            for q in range(1,threads+1): # generate process targets
+                exec("p"+str(q)+" = multiprocessing.Process(target=calcPix, args=(i+ymin,j+xmin+"+str(q-1)+",t"+str((q-1)*3+1)+",t"+str((q-1)*3+2)+",t"+str((q-1)*3+3)+"))")
+            
+            for q in range(1,threads+1): # start processes
+                exec("p"+str(q)+".start()")
+            for q in range(1,threads+1): # join processes
+                exec("p"+str(q)+".join()")
+                
+            for q in range(1,threads+1): # save pixel values
+                exec("pixels[i][j+"+str(q-1)+"] = [t"+str((q-1)*3+1)+".value,t"+str((q-1)*3+2)+".value,t"+str((q-1)*3+3)+".value]")
+            j+=threads
+            end = time.time()
+        print(round((end-start)*100)/100)
+        """
+        Comment out the next 5 lines to disable outputting to tmp2.png every line. This is recommended unless
+        you're running 
+        feh --force-aliasing -ZR 1 -g 800x800 tmp2.png
+        at the same time. That only works on linux, btw. 
+        """
+        
+        pixel2 = pixels.tolist()
+        pixel2 = [item for sublist in pixel2 for item in sublist]
+        pixel2 = [tuple(l) for l in pixel2]
+        im3 = Image.new("RGB", (xr, yr))
+        im3.putdata(pixel2)
+        im3.save("outputs/tmp2.png")
+        
+        i+=1
+
+    pixels = pixels.tolist()
+    pixels = [item for sublist in pixels for item in sublist]
+    pixels = [tuple(l) for l in pixels]
+    im2 = Image.new("RGB", (xr, yr))
+    im2.putdata(pixels)
+    name = "outputs/doot"+str(im_dim)+"Z"+str(mult)+".png"
+    #name = "outputs/doot"+str(im_dim)+"MTZoom.png"
+    im2.save(name)
+    

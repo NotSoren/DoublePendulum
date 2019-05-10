@@ -77,93 +77,93 @@ def calcPix(i1,j1,out1):
             return
         out1.value = step
         
-        
-args = sys.argv
-if len(args) >= 4:
-    im_dim = int(re.sub('[^0-9]', '', args[1]))
-    mult = float(re.sub('[^0-9.]', '', args[2]))
-    threadCount = int(re.sub('[^0-9]', '', args[3]))
-elif len(args) >= 3:
-    im_dim = int(re.sub('[^0-9]', '', args[1]))
-    mult = float(re.sub('[^0-9.]', '', args[2]))
-    threadCount = multiprocessing.cpu_count()*2
-elif len(args) >= 2:
-    im_dim = int(re.sub('[^0-9]', '', args[1]))
-    mult = 1 
-    threadCount = multiprocessing.cpu_count()*2
-else:
-    im_dim = 100
-    mult = 1
-    threadCount = multiprocessing.cpu_count()*2
+if __name__ == '__main__':
+    args = sys.argv
+    if len(args) >= 4:
+        im_dim = int(re.sub('[^0-9]', '', args[1]))
+        mult = float(re.sub('[^0-9.]', '', args[2]))
+        threadCount = int(re.sub('[^0-9]', '', args[3]))
+    elif len(args) >= 3:
+        im_dim = int(re.sub('[^0-9]', '', args[1]))
+        mult = float(re.sub('[^0-9.]', '', args[2]))
+        threadCount = multiprocessing.cpu_count()*2
+    elif len(args) >= 2:
+        im_dim = int(re.sub('[^0-9]', '', args[1]))
+        mult = 1 
+        threadCount = multiprocessing.cpu_count()*2
+    else:
+        im_dim = 100
+        mult = 1
+        threadCount = multiprocessing.cpu_count()*2
 
-threadCount = min(im_dim, threadCount) 
-print(threadCount)
+    threadCount = min(im_dim, threadCount) 
+    print(threadCount)
 
-pixels = np.zeros((im_dim, im_dim, 3))
-pixels = pixels.astype(int)
+    pixels = np.zeros((im_dim, im_dim, 3))
+    pixels = pixels.astype(int)
 
-left = 1
-pi2 = 2 * math.pi
+    left = 1
+    pi2 = 2 * math.pi
 
-# Declaring variables to be treated as pointers for multiprocessing. 
-for i in range(1,threadCount+1):
-    exec("t"+str(i)+" = multiprocessing.Value('i')")
+    # Declaring variables to be treated as pointers for multiprocessing. 
+    for i in range(1,threadCount+1):
+        exec("t"+str(i)+" = multiprocessing.Value('i')")
 
-xmin = 0
-xmax = im_dim
-ymin = 0
-ymax = im_dim
+    xmin = 0
+    xmax = im_dim
+    ymin = 0
+    ymax = im_dim
 
-print("Running between X=",xmin,xmax)
-print("Running between Y=",ymin,ymax)
+    print("Running between X=",xmin,xmax)
+    print("Running between Y=",ymin,ymax)
 
-i=ymin
-while i <= ymax - 1:
-    print(i,end=":")
-    if i < 100:
-        print(" ",end="")
-        if i < 10:
+    i=ymin
+    while i <= ymax - 1:
+        print(i,end=":")
+        if i < 100:
             print(" ",end="")
-    j=xmin
-    start = time.time()
-    if (i == 0): j+=1; print('__',end=''); pixels[0][0] = [255,255,255]
-    while j <= xmax - 1:
-        threads = min(threadCount,(xmax - j))
-        for q in range(1,threads+1): # generate process targets
-            exec("p"+str(q)+" = multiprocessing.Process(target=calcPix, args=(i,j+"+str(q-1)+",t"+str(q)+"))")
-        
-        for q in range(1,threads+1): # start processes
-            exec("p"+str(q)+".start()")
-        for q in range(1,threads+1): # join processes
-            exec("p"+str(q)+".join()")
+            if i < 10:
+                print(" ",end="")
+        j=xmin
+        start = time.time()
+        if (i == 0): j+=1; print('__',end=''); pixels[0][0] = [255,255,255]
+        while j <= xmax - 1:
+            threads = min(threadCount,(xmax - j))
+            for q in range(1,threads+1): # generate process targets
+                exec("p"+str(q)+" = multiprocessing.Process(target=calcPix, args=(i,j+"+str(q-1)+",t"+str(q)+"))")
             
-        for q in range(1,threads+1): # save pixel values
-            exec("pixels[i][j+"+str(q-1)+"] = stepToPix(t"+str(q)+",mult)")
-        j+=threads
-    end = time.time()
-    print(round((end-start)*100)/100)
-    i+=1
-    """
-    Comment out the next 5 lines to disable outputting to tmp2.png every line. This is recommended unless
-    you're running the below command at the same time. That only works on linux, btw. 
-    feh --force-aliasing -ZR 1 -g 800x800 tmp2.png
-    """
-    """
-    pixel2 = pixels.tolist()
-    pixel2 = [item for sublist in pixel2 for item in sublist]
-    pixel2 = [tuple(l) for l in pixel2]
-    im3 = Image.new("RGB", (im_dim, im_dim))
-    im3.putdata(pixel2)
-    im3.save("outputs/tmp2.png")
-    """
+            for q in range(1,threads+1): # start processes
+                exec("p"+str(q)+".start()")
+            for q in range(1,threads+1): # join processes
+                exec("p"+str(q)+".join()")
+                
+            for q in range(1,threads+1): # save pixel values
+                exec("pixels[i][j+"+str(q-1)+"] = stepToPix(t"+str(q)+",mult)")
+            j+=threads
+        end = time.time()
+        print(round((end-start)*100)/100)
+        i+=1
+        """
+        Comment out the next 5 lines to disable outputting to tmp2.png every line. This is recommended unless
+        you're running the below command at the same time. That only works on linux, btw. 
+        feh --force-aliasing -ZR 1 -g 800x800 tmp2.png
+        """
+        """
+        pixel2 = pixels.tolist()
+        pixel2 = [item for sublist in pixel2 for item in sublist]
+        pixel2 = [tuple(l) for l in pixel2]
+        im3 = Image.new("RGB", (im_dim, im_dim))
+        im3.putdata(pixel2)
+        im3.save("outputs/tmp2.png")
+        """
 
-pixels = pixels.tolist()
-pixels = [item for sublist in pixels for item in sublist]
-pixels = [tuple(l) for l in pixels]
-im2 = Image.new("RGB", (im_dim, im_dim))
-im2.putdata(pixels)
-name = "outputs/doot"+str(im_dim)+"MT"+re.sub('[.]', '_', str(mult))+".png"
-#name = "outputs/doot"+str(im_dim)+"MT.png"
-im2.save(name)
- 
-gc.collect()
+    pixels = pixels.tolist()
+    pixels = [item for sublist in pixels for item in sublist]
+    pixels = [tuple(l) for l in pixels]
+    im2 = Image.new("RGB", (im_dim, im_dim))
+    im2.putdata(pixels)
+    name = "outputs/doot"+str(im_dim)+"MT"+re.sub('[.]', '_', str(mult))+".png"
+    #name = "outputs/doot"+str(im_dim)+"MT.png"
+    im2.save(name)
+    
+    gc.collect()

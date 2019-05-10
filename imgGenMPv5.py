@@ -72,59 +72,61 @@ def calcPix(i):
         if step >= cap:return(-1)
     return(step)
 
-args = sys.argv
-if len(args) >= 4:
-    im_dim = int(re.sub('[^0-9]', '', args[1]))
-    mult = float(re.sub('[^0-9.]', '', args[2]))
-    threadCount = int(re.sub('[^0-9]', '', args[3]))
-elif len(args) >= 3:
-    im_dim = int(re.sub('[^0-9]', '', args[1]))
-    mult = float(re.sub('[^0-9.]', '', args[2]))
-    threadCount = multiprocessing.cpu_count()*2
-elif len(args) >= 2:
-    im_dim = int(re.sub('[^0-9]', '', args[1]))
-    mult = 1 
-    threadCount = multiprocessing.cpu_count()*2
-else:
-    im_dim = 100
-    mult = 1
-    threadCount = multiprocessing.cpu_count()*2
 
-print(threadCount)
-
-n = im_dim
-
-steps_count = np.zeros((im_dim, im_dim))
-steps_count = steps_count.astype(int)
-
-a = []
-for i in range(0,n*n):
-    a.append(i)
-pixels = np.zeros((im_dim, im_dim, 3))
-pixels = pixels.astype(int)
-
-pi2 = 2 * math.pi
-
-total_start = time.time()
-
-with Pool(threadCount) as p:
-    a = p.map(calcPix, a)
-for i in range(0,len(a)):
-    steps_count[int(i / im_dim)][i % im_dim] = a[i]
-print(steps_count)
-for y in range(0,im_dim):
-    for x in range(0,im_dim):
-        pixels[y][x] = stepToPix(steps_count[y][x],mult)
-
-pixels = pixels.tolist()
-pixels = [item for sublist in pixels for item in sublist]
-pixels = [tuple(l) for l in pixels]
-im2 = Image.new("RGB", (im_dim, im_dim))
-im2.putdata(pixels)
-name = "outputs/doot"+str(im_dim)+"POOL"+re.sub('[.]', '_', str(float(mult)))+".png"
-#name = "outputs/doot"+str(im_dim)+"MT.png"
-im2.save(name)
-
-end = time.time()
-print('time:',round((end-total_start)*1000)/1000,'s') 
-gc.collect()
+if __name__ == '__main__':
+    args = sys.argv
+    if len(args) >= 4:
+        im_dim = int(re.sub('[^0-9]', '', args[1]))
+        mult = float(re.sub('[^0-9.]', '', args[2]))
+        threadCount = int(re.sub('[^0-9]', '', args[3]))
+    elif len(args) >= 3:
+        im_dim = int(re.sub('[^0-9]', '', args[1]))
+        mult = float(re.sub('[^0-9.]', '', args[2]))
+        threadCount = multiprocessing.cpu_count()*2
+    elif len(args) >= 2:
+        im_dim = int(re.sub('[^0-9]', '', args[1]))
+        mult = 1 
+        threadCount = multiprocessing.cpu_count()*2
+    else:
+        im_dim = 100
+        mult = 1
+        threadCount = multiprocessing.cpu_count()*2
+    
+    print(threadCount)
+    
+    n = im_dim
+    
+    steps_count = np.zeros((im_dim, im_dim))
+    steps_count = steps_count.astype(int)
+    
+    a = []
+    for i in range(0,n*n):
+        a.append(i)
+    pixels = np.zeros((im_dim, im_dim, 3))
+    pixels = pixels.astype(int)
+    
+    pi2 = 2 * math.pi
+    
+    total_start = time.time()
+    
+    with Pool(threadCount) as p:
+        a = p.map(calcPix, a)
+    for i in range(0,len(a)):
+        steps_count[int(i / im_dim)][i % im_dim] = a[i]
+    print(steps_count)
+    for y in range(0,im_dim):
+        for x in range(0,im_dim):
+            pixels[y][x] = stepToPix(steps_count[y][x],mult)
+    
+    pixels = pixels.tolist()
+    pixels = [item for sublist in pixels for item in sublist]
+    pixels = [tuple(l) for l in pixels]
+    im2 = Image.new("RGB", (im_dim, im_dim))
+    im2.putdata(pixels)
+    name = "outputs/doot"+str(im_dim)+"POOL"+re.sub('[.]', '_', str(float(mult)))+".png"
+    #name = "outputs/doot"+str(im_dim)+"MT.png"
+    im2.save(name)
+    
+    end = time.time()
+    print('time:',round((end-total_start)*1000)/1000,'s') 
+    gc.collect()
