@@ -72,7 +72,6 @@ def calcPix(i):
         if step >= cap:return(-1)
     return(step)
 
-total_start = time.time()
 args = sys.argv
 if len(args) >= 4:
     im_dim = int(re.sub('[^0-9]', '', args[1]))
@@ -94,10 +93,6 @@ else:
 print(threadCount)
 
 n = im_dim
-m = im_dim
-d = 0
-
-b = [[d] * m for i in range(n)]
 
 steps_count = np.zeros((im_dim, im_dim))
 steps_count = steps_count.astype(int)
@@ -109,6 +104,8 @@ pixels = np.zeros((im_dim, im_dim, 3))
 pixels = pixels.astype(int)
 
 pi2 = 2 * math.pi
+
+total_start = time.time()
 
 with Pool(threadCount) as p:
     a = p.map(calcPix, a)
@@ -124,7 +121,7 @@ pixels = [item for sublist in pixels for item in sublist]
 pixels = [tuple(l) for l in pixels]
 im2 = Image.new("RGB", (im_dim, im_dim))
 im2.putdata(pixels)
-name = "outputs/doot"+str(im_dim)+"POOL"+re.sub('[.]', '_', str(mult))+".png"
+name = "outputs/doot"+str(im_dim)+"POOL"+re.sub('[.]', '_', str(float(mult)))+".png"
 #name = "outputs/doot"+str(im_dim)+"MT.png"
 im2.save(name)
 
