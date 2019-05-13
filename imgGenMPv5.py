@@ -125,7 +125,7 @@ if __name__ == '__main__':
     pixels = [tuple(l) for l in pixels]
     im2 = Image.new("RGB", (im_dim, im_dim))
     im2.putdata(pixels)
-    name = "outputs/doot"+str(im_dim)+"POOL"+re.sub('[.]', '_', str(float(mult)))+".png"
+    name = "outputs/doot"+str(im_dim)+"MP"+re.sub('[.]', '_', str(float(mult)))+".png"
     #name = "outputs/doot"+str(im_dim)+"MT.png"
     im2.save(name)
     
