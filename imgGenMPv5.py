@@ -69,8 +69,8 @@ def calcPix(i):
         a_1 += R[2]
         a_2 += R[3]
         step += 1
-        if step >= cap:print(i,R,step);return(-1)
-    print(i,R,step,type(R[0]))
+        if step >= cap:return(-1)
+    #print(i,R,step,type(R[0]))
     return(step)
 
 
