@@ -74,7 +74,8 @@ def calcPix(i):
 
 
 if __name__ == '__main__':
-    args = sys.argv
+    
+    args = sys.argv # Collecting arguments
     if len(args) >= 4:
         im_dim = int(re.sub('[^0-9]', '', args[1]))
         mult = float(re.sub('[^0-9.]', '', args[2]))
@@ -88,47 +89,40 @@ if __name__ == '__main__':
         mult = 1 
         threadCount = multiprocessing.cpu_count()*2
     else:
-        im_dim = 100
-        mult = 1
+        im_dim = 100.
+        mult = 1.
         threadCount = multiprocessing.cpu_count()*2
     
-    threadCount = min(threadCount,1010)
+    threadCount = min(threadCount,1010) #making sure to not use too many threads. 
     print(threadCount)
     
-    
-    n = im_dim
-    
-    steps_count = np.zeros((im_dim, im_dim))
-    steps_count = steps_count.astype(int)
-    
     a = []
-    for i in range(0,n*n):
-        a.append(i)
-    pixels = np.zeros((im_dim, im_dim, 3))
+    for i in range(0, im_dim ** 2):a.append(i) # Creating 1d array for worker pool run through 
+    
+    pixels = np.zeros((im_dim, im_dim, 3)) # creating empty 3d array for pixel data
     pixels = pixels.astype(int)
+    
+    total_start = time.time() # Starting timer
     
     pi2 = 2 * math.pi
     
-    total_start = time.time()
+    with Pool(threadCount) as p: # Creating pool of worker threads
+        a = p.map(calcPix, a)    # Assigning threads to calculate pixels
     
-    with Pool(threadCount) as p:
-        a = p.map(calcPix, a)
     for i in range(0,len(a)):
-        steps_count[int(i / im_dim)][i % im_dim] = a[i]
-    print(steps_count)
-    for y in range(0,im_dim):
-        for x in range(0,im_dim):
-            pixels[y][x] = stepToPix(steps_count[y][x],mult)
+        pixels[int(i / im_dim)][i % im_dim] = stepToPix(a[i],mult) # converting 1d array a[] to 2d array steps_count
     
-    pixels = pixels.tolist()
+    #Saving converting pixels and saving image
+    pixels = pixels.tolist() 
     pixels = [item for sublist in pixels for item in sublist]
     pixels = [tuple(l) for l in pixels]
     im2 = Image.new("RGB", (im_dim, im_dim))
     im2.putdata(pixels)
-    name = "outputs/doot"+str(im_dim)+"MP"+re.sub('[.]', '_', str(float(mult)))+".png"
-    #name = "outputs/doot"+str(im_dim)+"MT.png"
+    name = "outputs/doot"+str(im_dim)+"MT"+re.sub('[.]', '_', str(float(mult)))+".png" # creating image title
     im2.save(name)
-    
     end = time.time()
-    print('time:',round((end-total_start)*1000)/1000,'s') 
+    
+    total = end-total_start
+    print('time:',round((total)*1000)/1000,'s') 
+    print('each:',round((total/(im_dim**2))*1000)/1000,'s')
     gc.collect()

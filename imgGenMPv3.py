@@ -150,7 +150,6 @@ if __name__ == '__main__':
                 print(" ",end="")
         j=xmin
         start = time.time()
-        if (i == 0): j+=1; print('__',end=''); pixels[0][0] = [255,255,255]
         while j <= xmax - 1:
             threads = min(threadCount,(xmax - j))
             for q in range(1,threads+1): # generate process targets
@@ -167,19 +166,6 @@ if __name__ == '__main__':
             end = time.time()
         print(round((end-start)*100)/100)
         i+=1
-        """
-        Comment out the next 5 lines to disable outputting to tmp2.png every line. This is recommended unless
-        you're running the below command at the same time. That only works on linux, btw. 
-        feh --force-aliasing -ZR 1 -g 800x800 tmp2.png
-        """
-        """
-        pixel2 = pixels.tolist()
-        pixel2 = [item for sublist in pixel2 for item in sublist]
-        pixel2 = [tuple(l) for l in pixel2]
-        im3 = Image.new("RGB", (im_dim, im_dim))
-        im3.putdata(pixel2)
-        im3.save("outputs/tmp2.png")
-        """
 
     pixels = pixels.tolist()
     pixels = [item for sublist in pixels for item in sublist]
@@ -190,5 +176,8 @@ if __name__ == '__main__':
     #name = "outputs/doot"+str(im_dim)+"MT.png"
     im2.save(name)
     end = time.time()
-    print('time:',round((end-total_start)*1000)/1000,'s') 
+    
+    total = end-total_start
+    print('time:',round((total)*1000)/1000,'s') 
+    print('each:',round((total/(im_dim**2))*1000)/1000,'s')
     gc.collect()
