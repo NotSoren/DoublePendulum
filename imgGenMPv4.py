@@ -8,6 +8,7 @@ import time
 #from termcolor import colored, cprint
 import gc
 import os
+from multiprocessing import Pool
 
 def LR(T1, T2, w1, w2):
     alpha2 = math.cos(T1 - T2)
@@ -18,29 +19,27 @@ def LR(T1, T2, w1, w2):
     a1 = (F1 - alpha1 * F2) / (1 - alpha1 * alpha2)
     a2 = (F2 - alpha2 * F1) / (1 - alpha1 * alpha2)
     #gc.collect()
-    return np.array([w1, w2, a1, a2])
+    #return np.array([w1, w2, a1, a2])
+    return([w1, w2, a1, a2])
 
 def stepToPix(step1,mult):
-    step = step1.value
+    step = step1
     #print(step,end=',')
-    if step >= 10000*mult:
-        print('  ',end='')
-        return (255, 255, 255)
+    if (step >= 10000*mult) | (step == -1):
+        o = (255, 255, 255)
     elif step > 1000*mult:
-        print('░░',end='')
-        return [int(round(l*step/10000/mult)) for l in (0, 0, 255)]
+        o = [int(round(l*step/10000/mult)) for l in (0, 0, 255)]
     elif step > 100*mult:
-        print('▒▒',end='')
-        return [int(round(l*step/1000/mult)) for l in (255, 0, 255)]
+        o = [int(round(l*step/1000/mult)) for l in (255, 0, 255)]
     elif step > 10*mult:
-        print('▓▓',end='')
-        return [int(round(l*step/100/mult)) for l in (255, 0, 0)]
+        o = [int(round(l*step/100/mult)) for l in (255, 0, 0)]
     else:
-        print('██',end='')
-        return [int(round(l*step/10/mult)) for l in (0, 255, 0)]
+        o = [int(round(l*step/10/mult)) for l in (0, 255, 0)]
+    return(np.array(o))
 
-
-def calcPix(i1,j1,out1):
+def calcPix(i):
+    i1 = int(i / im_dim) # y
+    j1 = i % im_dim # x
     pi2 = 2 * math.pi
     step = 0
     h = 0.01
@@ -55,30 +54,41 @@ def calcPix(i1,j1,out1):
     cap = 10000*mult
     
     if (3*math.cos(Th_1) + math.cos(Th_2) < -2) | (.286<=j2<=.341) & (.265<=i2<=.372) | (.662<=j2<=.715) & (.667<=i2<=.742):
-        out1.value = int(cap)
-        return
+        return(-1)
 
     while abs((Th_1%(pi2)) - ((Th_2+math.pi)%(pi2))) > 0.03407:            
         current_state = [Th_1, Th_2, a_1, a_2]
         k1 = LR(*current_state)
-        k2 = LR(*(current_state + h * k1 / 2))
-        k3 = LR(*(current_state + h * k2 / 2))
-        k4 = LR(*(current_state + h * k3))
         
-        R = 1 / 6 * h * (k1 + 2 * k2 + 2 * k3 + k4)
+        for i in range(0,4):
+            current_state[i] = current_state[i] + h * k1[i] / 2
+        k2 = LR(*(current_state))
+
+        for i in range(0,4):
+            current_state[i] = current_state[i] + h * k2[i] / 2
+        k3 = LR(*(current_state))
+        
+        for i in range(0,4):
+            current_state[i] = current_state[i] + h * k3[i]
+        k4 = LR(*(current_state))
+        
+        R=[0,0,0,0]
+        for i in range(0,4):
+            R[i] = 1 / 6 * h * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i])
+        #R = 1 / 6 * h * (k1 + 2 * k2 + 2 * k3 + k4)
         
         Th_1 += R[0]
         Th_2 += R[1]
         a_1 += R[2]
         a_2 += R[3]
         step += 1
-        if step >= cap:
-            out1.value = step
-            return
-        out1.value = step
-        
+        if step >= cap:return(-1)
+    return(step)
+
+
 if __name__ == '__main__':
-    args = sys.argv
+    
+    args = sys.argv # Collecting arguments
     if len(args) >= 4:
         im_dim = int(re.sub('[^0-9]', '', args[1]))
         mult = float(re.sub('[^0-9.]', '', args[2]))
@@ -92,78 +102,40 @@ if __name__ == '__main__':
         mult = 1 
         threadCount = multiprocessing.cpu_count()*2
     else:
-        im_dim = 100
-        mult = 1
+        im_dim = 100.
+        mult = 1.
         threadCount = multiprocessing.cpu_count()*2
-
-    threadCount = min(im_dim, threadCount) 
+    
+    threadCount = min(threadCount,1010) #making sure to not use too many threads. 
     print(threadCount)
-
-    pixels = np.zeros((im_dim, im_dim, 3))
+    
+    a = []
+    for i in range(0, im_dim ** 2):a.append(i) # Creating 1d array for worker pool run through 
+    
+    pixels = np.zeros((im_dim, im_dim, 3)) # creating empty 3d array for pixel data
     pixels = pixels.astype(int)
-
-    left = 1
+    
+    total_start = time.time() # Starting timer
+    
     pi2 = 2 * math.pi
-
-    # Declaring variables to be treated as pointers for multiprocessing. 
-    for i in range(1,threadCount+1):
-        exec("t"+str(i)+" = multiprocessing.Value('i')")
-
-    xmin = 0
-    xmax = im_dim
-    ymin = 0
-    ymax = im_dim
-
-    print("Running between X=",xmin,xmax)
-    print("Running between Y=",ymin,ymax)
-
-    i=ymin
-    while i <= ymax - 1:
-        print(i,end=":")
-        if i < 100:
-            print(" ",end="")
-            if i < 10:
-                print(" ",end="")
-        j=xmin
-        start = time.time()
-        if (i == 0): j+=1; print('__',end=''); pixels[0][0] = [255,255,255]
-        while j <= xmax - 1:
-            threads = min(threadCount,(xmax - j))
-            for q in range(1,threads+1): # generate process targets
-                exec("p"+str(q)+" = multiprocessing.Process(target=calcPix, args=(i,j+"+str(q-1)+",t"+str(q)+"))")
-            
-            for q in range(1,threads+1): # start processes
-                exec("p"+str(q)+".start()")
-            for q in range(1,threads+1): # join processes
-                exec("p"+str(q)+".join()")
-                
-            for q in range(1,threads+1): # save pixel values
-                exec("pixels[i][j+"+str(q-1)+"] = stepToPix(t"+str(q)+",mult)")
-            j+=threads
-        end = time.time()
-        print(round((end-start)*100)/100)
-        i+=1
-        """
-        Comment out the next 5 lines to disable outputting to tmp2.png every line. This is recommended unless
-        you're running the below command at the same time. That only works on linux, btw. 
-        feh --force-aliasing -ZR 1 -g 800x800 tmp2.png
-        """
-        """
-        pixel2 = pixels.tolist()
-        pixel2 = [item for sublist in pixel2 for item in sublist]
-        pixel2 = [tuple(l) for l in pixel2]
-        im3 = Image.new("RGB", (im_dim, im_dim))
-        im3.putdata(pixel2)
-        im3.save("outputs/tmp2.png")
-        """
-
-    pixels = pixels.tolist()
+    
+    with Pool(threadCount) as p: # Creating pool of worker threads
+        a = p.map(calcPix, a)    # Assigning threads to calculate pixels
+    
+    for i in range(0,len(a)):
+        pixels[int(i / im_dim)][i % im_dim] = stepToPix(a[i],mult) # converting 1d array a[] to 2d array steps_count
+    
+    #Saving converting pixels and saving image
+    pixels = pixels.tolist() 
     pixels = [item for sublist in pixels for item in sublist]
     pixels = [tuple(l) for l in pixels]
     im2 = Image.new("RGB", (im_dim, im_dim))
     im2.putdata(pixels)
-    name = "outputs/doot"+str(im_dim)+"MT"+re.sub('[.]', '_', str(mult))+".png"
-    #name = "outputs/doot"+str(im_dim)+"MT.png"
+    name = "outputs/doot"+str(im_dim)+"PY"+re.sub('[.]', '_', str(float(mult)))+".png" # creating image title
     im2.save(name)
+    end = time.time()
     
+    total = end-total_start
+    print('time:',round((total)*1000)/1000,'s') 
+    print('each:',round((total/(im_dim**2))*1000)/1000,'s')
     gc.collect()
