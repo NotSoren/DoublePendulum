@@ -44,7 +44,6 @@ def calcPix(i):
     h = 0.01
     a_1 = 0
     a_2 = 0
-
     Th_1 = (i1 / im_dim) * pi2
     Th_2 = (j1 / im_dim) * pi2
     i2 = i1 / im_dim 
@@ -55,6 +54,7 @@ def calcPix(i):
     if (3*math.cos(Th_1) + math.cos(Th_2) < -2) | (.286<=j2<=.341) & (.265<=i2<=.372) | (.662<=j2<=.715) & (.667<=i2<=.742):
         return(-1)
 
+    #print(i)
     while abs((Th_1%(pi2)) - ((Th_2+math.pi)%(pi2))) > 0.03407:            
         current_state = [Th_1, Th_2, a_1, a_2]
         k1 = LR(*current_state)
