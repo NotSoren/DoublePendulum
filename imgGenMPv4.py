@@ -144,5 +144,5 @@ if __name__ == '__main__':
     
     total = end-total_start
     print('time:',round((total)*1000)/1000,'s')
-    print('each:',round((total/(im_dim**2))*1000)/1000,'s')
+    print('each:',round((total/(im_dim**2))*100000)/100000,'s')
     gc.collect()
