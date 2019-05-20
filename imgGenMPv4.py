@@ -50,7 +50,7 @@ def calcPix(i):
     j2 = j1 / im_dim
     
     current_state = [0.,0.,0.,0.]
-    
+    current_state2 = [0,0,0,0]
     cap = 10000*mult
     R=[0.,0.,0.,0.]
     if (3*math.cos(Th_1) + math.cos(Th_2) < -2) | (.286<=j2<=.341) & (.265<=i2<=.372) | (.662<=j2<=.715) & (.667<=i2<=.742):
@@ -70,16 +70,16 @@ def calcPix(i):
         k1 = LR(*current_state)
         
         for ar in range(0,4):
-            current_state[ar] = current_state[ar] + h * k1[ar] / 2
-        k2 = LR(*current_state)
+            current_state2[ar] = current_state[ar] + h * k1[ar] / 2
+        k2 = LR(*current_state2)
         
         for ar in range(0,4):
-            current_state[ar] = current_state[ar] + h * k2[ar] / 2
-        k3 = LR(*current_state)
+            current_state2[ar] = current_state[ar] + h * k2[ar] / 2
+        k3 = LR(*current_state2)
         
         for ar in range(0,4):
-            current_state[ar] = current_state[ar] + h * k3[ar]
-        k4 = LR(*current_state)
+            current_state2[ar] = current_state[ar] + h * k3[ar]
+        k4 = LR(*current_state2)
         
         for ar in range(0,4):
             R[ar] = 1 / 6 * h * (k1[ar] + 2 * k2[ar] + 2 * k3[ar] + k4[ar])

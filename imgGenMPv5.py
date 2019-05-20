@@ -18,7 +18,6 @@ def LR(T1, T2, w1, w2):
     F2 = w1**2 * tmp + 9.8 * math.sin(T2)
     a1 = (F1 - alpha1 * F2) / (1 - alpha1 * alpha2)
     a2 = (F2 - alpha2 * F1) / (1 - alpha1 * alpha2)
-    #gc.collect()
     return np.array([w1, w2, a1, a2])
 
 def stepToPix(step1):
@@ -53,7 +52,7 @@ def calcPix(i):
     
     if (3*math.cos(Th_1) + math.cos(Th_2) < -2) | (.286<=j2<=.341) & (.265<=i2<=.372) | (.662<=j2<=.715) & (.667<=i2<=.742):
         return(-1)
-
+    current_state2 = [0,0,0,0] 
     #print(i)
     while abs((Th_1%(pi2)) - ((Th_2+math.pi)%(pi2))) > 0.03407:
         current_state = [Th_1, Th_2, a_1, a_2]
@@ -80,38 +79,41 @@ if __name__ == '__main__':
     if len(args) >= 4:
         im_dim = int(re.sub('[^0-9]', '', args[1]))
         mult = float(re.sub('[^0-9.]', '', args[2]))
-        threadCount = int(re.sub('[^0-9]', '', args[3]))
+        thread_count = int(re.sub('[^0-9]', '', args[3]))
     elif len(args) >= 3:
         im_dim = int(re.sub('[^0-9]', '', args[1]))
         mult = float(re.sub('[^0-9.]', '', args[2]))
-        threadCount = multiprocessing.cpu_count()*2
+        thread_count = multiprocessing.cpu_count()*2
     elif len(args) >= 2:
         im_dim = int(re.sub('[^0-9]', '', args[1]))
         mult = 1
-        threadCount = multiprocessing.cpu_count()*2
+        thread_count = multiprocessing.cpu_count()*2
     else:
         im_dim = 100.
         mult = 1.
-        threadCount = multiprocessing.cpu_count()*2
+        thread_count = multiprocessing.cpu_count()*2
     
-    threadCount = min(threadCount,1010) #making sure to not use too many threads... I'm not sure if there's a concrete limit or if its determined by the OS or machine
-    threadCount = min(threadCount,im_dim ** 2) #threadCount should always be less than the total number of pixels. 
-    print("threads:",threadCount)
+    thread_count = min(thread_count,1010) #making sure to not use too many threads... I'm not sure if there's a concrete limit or if its determined by the OS or machine
+    thread_count = min(thread_count,im_dim ** 2) #thread_count should always be less than the total number of pixels. 
+    #print("threads:",thread_count)
     
-    a = []
-    for i in range(0, im_dim ** 2):a.append(i) # Creating 1d array for worker pool run through
+    process_list = []
+    for i in range(0, im_dim ** 2):process_list.append(i) # Creating 1d array for worker pool run through
     
     pixels = np.zeros((im_dim, im_dim, 3)) # creating empty 3d array for pixel data
     pixels = pixels.astype(int)
     
     total_start = time.time() # Starting timer
     
-    with Pool(threadCount) as p: # Creating pool of worker threads
-        a = p.map(calcPix, a)    # Assigning threads to calculate step counts
-        a = p.map(stepToPix, a)  # Turning step counts into pixel values
+    with Pool(thread_count) as p: # Creating pool of worker threads
+        process_list = p.map(calcPix, process_list) # Assigning threads to calculate step counts
+        pixel_list = p.map(stepToPix, process_list) # Turning step counts into pixel values
+        del(process_list)
     
-    for i in range(0,len(a)): # Exporting those pixel values to pixels[][]
-        pixels[int(i / im_dim)][i % im_dim] = a[i]
+    for i in range(0,len(pixel_list)): # Exporting those pixel values to pixels[][]
+        pixels[int(i / im_dim)][i % im_dim] = pixel_list[i]
+    
+    #del(pixel_list)
     
     #Saving converting pixels and saving image
     pixels = pixels.tolist()
