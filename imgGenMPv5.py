@@ -107,7 +107,7 @@ if __name__ == '__main__':
     total_start = time.time() # Starting timer
     
     with Pool(threadCount) as p: # Creating pool of worker threads
-        a = p.map(calcPix, a)    # Assigning threads to calculate pixels
+        a = p.map(calcPix, a)    # Assigning threads to calculate step counts
         a = p.map(stepToPix, a)  # Turning step counts into pixel values
     
     for i in range(0,len(a)): # Exporting those pixel values to pixels[][]
