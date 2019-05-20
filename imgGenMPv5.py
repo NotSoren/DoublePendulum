@@ -21,7 +21,7 @@ def LR(T1, T2, w1, w2):
     #gc.collect()
     return np.array([w1, w2, a1, a2])
 
-def stepToPix(step1,mult):
+def stepToPix(step1):
     step = step1
     #print(step,end=',')
     if (step >= 10000*mult) | (step == -1):
@@ -95,7 +95,8 @@ if __name__ == '__main__':
         threadCount = multiprocessing.cpu_count()*2
     
     threadCount = min(threadCount,1010) #making sure to not use too many threads... I'm not sure if there's a concrete limit or if its determined by the OS or machine
-    print(threadCount)
+    threadCount = min(threadCount,im_dim ** 2) #threadCount should always be less than the total number of pixels. 
+    print("threads:",threadCount)
     
     a = []
     for i in range(0, im_dim ** 2):a.append(i) # Creating 1d array for worker pool run through
@@ -105,13 +106,12 @@ if __name__ == '__main__':
     
     total_start = time.time() # Starting timer
     
-    pi2 = 2 * math.pi
-    
     with Pool(threadCount) as p: # Creating pool of worker threads
         a = p.map(calcPix, a)    # Assigning threads to calculate pixels
+        a = p.map(stepToPix, a)  # Turning step counts into pixel values
     
-    for i in range(0,len(a)):
-        pixels[int(i / im_dim)][i % im_dim] = stepToPix(a[i],mult) # converting 1d array a[] to 2d array steps_count
+    for i in range(0,len(a)): # Exporting those pixel values to pixels[][]
+        pixels[int(i / im_dim)][i % im_dim] = a[i]
     
     #Saving converting pixels and saving image
     pixels = pixels.tolist()
