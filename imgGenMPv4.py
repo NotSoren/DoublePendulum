@@ -141,7 +141,7 @@ if __name__ == '__main__':
     pixels = [tuple(l) for l in pixels]
     im2 = Image.new("RGB", (im_dim, im_dim))
     im2.putdata(pixels)
-    name = "outputs/doot"+str(im_dim)+"PY"+re.sub('[.]', '_', str(float(mult)))+".png" # creating image title
+    name = "outputs/doot"+str(im_dim)+"MP"+re.sub('[.]', '_', str(float(mult)))+".png" # creating image title
     im2.save(name)
     end = time.time()
     
