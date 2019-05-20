@@ -145,12 +145,12 @@ if __name__ == '__main__':
         at the same time. That only works on linux, btw. 
         """
         
-        pixel2 = pixels.tolist()
-        pixel2 = [item for sublist in pixel2 for item in sublist]
-        pixel2 = [tuple(l) for l in pixel2]
-        im3 = Image.new("RGB", (xr, yr))
-        im3.putdata(pixel2)
-        im3.save("outputs/tmp2.png")
+        #pixel2 = pixels.tolist()
+        #pixel2 = [item for sublist in pixel2 for item in sublist]
+        #pixel2 = [tuple(l) for l in pixel2]
+        #im3 = Image.new("RGB", (xr, yr))
+        #im3.putdata(pixel2)
+        #im3.save("outputs/tmp2.png")
         
         i+=1
 
