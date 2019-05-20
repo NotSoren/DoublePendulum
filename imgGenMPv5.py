@@ -46,7 +46,7 @@ def calcPix(i):
     a_2 = 0
     Th_1 = (i1 / im_dim) * pi2
     Th_2 = (j1 / im_dim) * pi2
-    i2 = i1 / im_dim 
+    i2 = i1 / im_dim
     j2 = j1 / im_dim
     
     cap = 10000*mult
@@ -55,7 +55,7 @@ def calcPix(i):
         return(-1)
 
     #print(i)
-    while abs((Th_1%(pi2)) - ((Th_2+math.pi)%(pi2))) > 0.03407:            
+    while abs((Th_1%(pi2)) - ((Th_2+math.pi)%(pi2))) > 0.03407:
         current_state = [Th_1, Th_2, a_1, a_2]
         k1 = LR(*current_state)
         k2 = LR(*(current_state + h * k1 / 2))
@@ -87,18 +87,18 @@ if __name__ == '__main__':
         threadCount = multiprocessing.cpu_count()*2
     elif len(args) >= 2:
         im_dim = int(re.sub('[^0-9]', '', args[1]))
-        mult = 1 
+        mult = 1
         threadCount = multiprocessing.cpu_count()*2
     else:
         im_dim = 100.
         mult = 1.
         threadCount = multiprocessing.cpu_count()*2
     
-    threadCount = min(threadCount,1010) #making sure to not use too many threads. 
+    threadCount = min(threadCount,1010) #making sure to not use too many threads... I'm not sure if there's a concrete limit or if its determined by the OS or machine
     print(threadCount)
     
     a = []
-    for i in range(0, im_dim ** 2):a.append(i) # Creating 1d array for worker pool run through 
+    for i in range(0, im_dim ** 2):a.append(i) # Creating 1d array for worker pool run through
     
     pixels = np.zeros((im_dim, im_dim, 3)) # creating empty 3d array for pixel data
     pixels = pixels.astype(int)
@@ -114,7 +114,7 @@ if __name__ == '__main__':
         pixels[int(i / im_dim)][i % im_dim] = stepToPix(a[i],mult) # converting 1d array a[] to 2d array steps_count
     
     #Saving converting pixels and saving image
-    pixels = pixels.tolist() 
+    pixels = pixels.tolist()
     pixels = [item for sublist in pixels for item in sublist]
     pixels = [tuple(l) for l in pixels]
     im2 = Image.new("RGB", (im_dim, im_dim))
@@ -124,6 +124,6 @@ if __name__ == '__main__':
     end = time.time()
     
     total = end-total_start
-    print('time:',round((total)*1000)/1000,'s') 
+    print('time:',round((total)*1000)/1000,'s')
     print('each:',round((total/(im_dim**2))*1000)/1000,'s')
     gc.collect()

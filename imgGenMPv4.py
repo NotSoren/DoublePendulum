@@ -49,11 +49,13 @@ def calcPix(i):
     i2 = i1 / im_dim 
     j2 = j1 / im_dim
     
+    current_state = [0.,0.,0.,0.]
+    
     cap = 10000*mult
     R=[0.,0.,0.,0.]
     if (3*math.cos(Th_1) + math.cos(Th_2) < -2) | (.286<=j2<=.341) & (.265<=i2<=.372) | (.662<=j2<=.715) & (.667<=i2<=.742):
         return(-1)
-
+    
     while abs(float(Th_1%(pi2)) - float((Th_2+math.pi)%(pi2))) >= 0.03407:            
         #current_state = [Th_1, Th_2, a_1, a_2]
         #k1 = LR(*current_state)
@@ -62,7 +64,7 @@ def calcPix(i):
         #k4 = LR(*(current_state + h * k3))
         
         #R = 1 / 6 * h * (k1 + 2 * k2 + 2 * k3 + k4)
-
+        
         
         current_state = [Th_1, Th_2, a_1, a_2]
         k1 = LR(*current_state)
@@ -88,8 +90,10 @@ def calcPix(i):
         a_1 += R[2]
         a_2 += R[3]
         step += 1
-        if step >= cap:print(i,step);return(-1)
-    print(i,step)
+        if step >= cap:
+            #print(i,step)
+            return(-1)
+    #print(i,step)
     return(step)
 
 
