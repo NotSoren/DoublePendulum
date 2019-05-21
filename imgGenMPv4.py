@@ -99,7 +99,7 @@ if __name__ == '__main__':
         im_dim = int(re.sub('[^0-9]', '', args[1]))
         mult = float(re.sub('[^0-9.]', '', args[2]))
         thread_count = int(re.sub('[^0-9]', '', args[3]))
-        output = int(re.sub('[^01]', '', args[4])[0])
+        output = int(re.sub('[^0-2]', '', args[4])[0])
     elif len(args) >= 4:
         im_dim = int(re.sub('[^0-9]', '', args[1]))
         mult = float(re.sub('[^0-9.]', '', args[2]))
@@ -148,7 +148,11 @@ if __name__ == '__main__':
     pixels = [tuple(l) for l in pixels]
     im2 = Image.new("RGB", (im_dim, im_dim))
     im2.putdata(pixels)
-    name = "outputs/doot"+str(im_dim)+"MT"+re.sub('[.]', '_', str(float(mult)))+".png" # creating image title
+    if output == 2:
+        name = "doot"+str(im_dim)+"MT"+re.sub('[.]', '_', str(float(mult)))+".png"
+    else:
+        name = "outputs/doot"+str(im_dim)+"MT"+re.sub('[.]', '_', str(float(mult)))+".png" # creating image title
+    
     if output == 1:im2.save(name)
     
     end = time.time()
