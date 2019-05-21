@@ -20,10 +20,12 @@ def LR(T1, T2, w1, w2):
     a2 = (F2 - alpha2 * F1) / (1 - alpha1 * alpha2)
     return np.array([w1, w2, a1, a2])
 
-def stepToPix(step1):
-    step = step1
+def stepToPix(step):
+    failed_colour = (255,255,255)
     #print(step,end=',')
-    if (step >= 10000*mult) | (step == -1):
+    if step == -1:
+        o = failed_colour
+    elif step >= 10000*mult:
         o = (255, 255, 255)
     elif step > 1000*mult:
         o = [int(round(l*step/10000/mult)) for l in (0, 0, 255)]
@@ -31,9 +33,11 @@ def stepToPix(step1):
         o = [int(round(l*step/1000/mult)) for l in (255, 0, 255)]
     elif step > 10*mult:
         o = [int(round(l*step/100/mult)) for l in (255, 0, 0)]
-    else:
+    elif step > 1*mult:
         o = [int(round(l*step/10/mult)) for l in (0, 255, 0)]
-    return(np.array(o))
+    else:
+        o = [int(round(l*step/1/mult)) for l in (0, 255, 255)]
+    return np.array(o)
 
 def calcPix(i):
     i1 = int(i / im_dim) # y

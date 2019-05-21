@@ -33,8 +33,10 @@ def stepToPix(step):
         o = [int(round(l*step/1000/mult)) for l in (255, 0, 255)]
     elif step > 10*mult:
         o = [int(round(l*step/100/mult)) for l in (255, 0, 0)]
-    else:
+    elif step > 1*mult:
         o = [int(round(l*step/10/mult)) for l in (0, 255, 0)]
+    else:
+        o = [int(round(l*step/1/mult)) for l in (0, 255, 255)]
     return(o)
 
 def calcPix(i):
@@ -130,6 +132,7 @@ if __name__ == '__main__':
     
     pixels = np.zeros((im_dim, im_dim, 3)) # creating empty 3d array for pixel data
     pixels = pixels.astype(int)
+    pixels = pixels.tolist()
     
     total_start = time.time() # Starting timer
     
@@ -142,8 +145,8 @@ if __name__ == '__main__':
         pixels[int(i / im_dim)][i % im_dim] = pixel_list[i]
     del(pixel_list)
     
-    #Saving converting pixels and saving image
-    pixels = pixels.tolist()
+    #Converting pixels and saving image
+    #pixels = pixels.tolist()
     pixels = [item for sublist in pixels for item in sublist]
     pixels = [tuple(l) for l in pixels]
     im2 = Image.new("RGB", (im_dim, im_dim))
