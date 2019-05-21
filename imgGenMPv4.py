@@ -153,7 +153,7 @@ if __name__ == '__main__':
     else:
         name = "outputs/doot"+str(im_dim)+"MT"+re.sub('[.]', '_', str(float(mult)))+".png" # creating image title
     
-    if output == 1:im2.save(name)
+    if output != 0:im2.save(name)
     
     end = time.time()
     
