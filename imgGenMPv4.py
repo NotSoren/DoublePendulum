@@ -95,22 +95,31 @@ def calcPix(i):
 if __name__ == '__main__':
     
     args = sys.argv # Collecting arguments
-    if len(args) >= 4:
+    if len(args) >= 5:
         im_dim = int(re.sub('[^0-9]', '', args[1]))
         mult = float(re.sub('[^0-9.]', '', args[2]))
         thread_count = int(re.sub('[^0-9]', '', args[3]))
+        output = int(re.sub('[^01]', '', args[4])[0])
+    elif len(args) >= 4:
+        im_dim = int(re.sub('[^0-9]', '', args[1]))
+        mult = float(re.sub('[^0-9.]', '', args[2]))
+        thread_count = int(re.sub('[^0-9]', '', args[3]))
+        output = 1
     elif len(args) >= 3:
         im_dim = int(re.sub('[^0-9]', '', args[1]))
         mult = float(re.sub('[^0-9.]', '', args[2]))
         thread_count = multiprocessing.cpu_count()*4
+        output = 1
     elif len(args) >= 2:
         im_dim = int(re.sub('[^0-9]', '', args[1]))
         mult = 1
         thread_count = multiprocessing.cpu_count()*4
+        output = 1
     else:
         im_dim = 100
         mult = 1
         thread_count = multiprocessing.cpu_count()*4
+        output = 1
     
     thread_count = min(thread_count,1010) #making sure to not use too many threads... I'm not sure if there's a concrete limit or if its determined by the OS or machine
     thread_count = min(thread_count,im_dim ** 2) #thread_count should always be less than the total number of pixels. 
@@ -140,7 +149,8 @@ if __name__ == '__main__':
     im2 = Image.new("RGB", (im_dim, im_dim))
     im2.putdata(pixels)
     name = "outputs/doot"+str(im_dim)+"MT"+re.sub('[.]', '_', str(float(mult)))+".png" # creating image title
-    im2.save(name)
+    if output == 1:im2.save(name)
+    
     end = time.time()
     
     total = end-total_start
