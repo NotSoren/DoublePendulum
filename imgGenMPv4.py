@@ -46,10 +46,10 @@ def calcPix(i):
     a_1 = 0
     a_2 = 0
     
-    Th_1 = (i1 / im_dim) * pi2
-    Th_2 = (j1 / im_dim) * pi2
     i2 = i1 / im_dim 
     j2 = j1 / im_dim
+    Th_1 = i2 * pi2
+    Th_2 = j2 * pi2
     
     current_state = [0,0,0,0]
     current_state2 = [0,0,0,0]
@@ -57,7 +57,7 @@ def calcPix(i):
     R=[0.,0.,0.,0.]
     if (3*math.cos(Th_1) + math.cos(Th_2) < -2) | (.286<=j2<=.341) & (.265<=i2<=.372) | (.662<=j2<=.715) & (.5<=i2<=.742):
         return(-1)
-    if (.335<i2<.67) & (.25<2<.67) | (.275<i2<.73) & (.375<j2<.635) | (.3<i2<.71) & (.325<j2<.69):
+    if (.335<i2<.67) & (.25<2<.66) | (.275<i2<.73) & (.375<j2<.625) | (.3<i2<.71) & (.325<j2<.68):
         return(-1)
 
     while abs(float(Th_1%(pi2)) - float((Th_2+math.pi)%(pi2))) >= 0.03407:            
