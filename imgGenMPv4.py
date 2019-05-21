@@ -38,16 +38,17 @@ def stepToPix(step):
     return(o)
 
 def calcPix(i):
-    i1 = int(i / im_dim) # y
-    j1 = i % im_dim # x
+    i1 = int(i / im_dim) # y pos
+    j1 = i % im_dim # x pos
     pi2 = 2 * math.pi
     step = 0
-    h = 0.01
-    a_1 = 0
-    a_2 = 0
+    h = 0.01 # how much should the timer advance during one iteration?
     
     i2 = i1 / im_dim 
     j2 = j1 / im_dim
+    
+    a_1 = 0
+    a_2 = 0
     Th_1 = i2 * pi2
     Th_2 = j2 * pi2
     
@@ -61,7 +62,7 @@ def calcPix(i):
         return(-1)
     if (.335<i2<.67) & (.25<2<.66) | (.275<i2<.73) & (.375<j2<.625) | (.3<i2<.71) & (.325<j2<.68):
         return(-1)
-
+    
     while abs(float(Th_1%(pi2)) - float((Th_2+math.pi)%(pi2))) >= 0.03407:            
         current_state = [Th_1, Th_2, a_1, a_2]
         k1 = LR(*current_state)
@@ -81,16 +82,13 @@ def calcPix(i):
         for ar in range(0,4):
             R[ar] = 1 / 6 * h * (k1[ar] + 2 * k2[ar] + 2 * k3[ar] + k4[ar])
         
-        
         Th_1 += R[0]
         Th_2 += R[1]
         a_1 += R[2]
         a_2 += R[3]
         step += 1
         if step >= cap:
-            #print(i,step)
             return(cap)
-    #print(i,step)
     return(step)
 
 
@@ -128,16 +126,13 @@ if __name__ == '__main__':
     
     with Pool(thread_count) as p: # Creating pool of worker threads
         process_list = p.map(calcPix, process_list) # Assigning threads to calculate step counts
-        #print(1,time.time()-total_start)
         pixel_list = p.map(stepToPix, process_list) # Turning step counts into pixel values
         del(process_list)
-        #print(2,time.time()-total_start)
     
     for i in range(0,len(pixel_list)): # Exporting those pixel values to pixels[][]
         pixels[int(i / im_dim)][i % im_dim] = pixel_list[i]
     del(pixel_list)
     
-    #print(3,time.time()-total_start)
     #Saving converting pixels and saving image
     pixels = pixels.tolist()
     pixels = [item for sublist in pixels for item in sublist]

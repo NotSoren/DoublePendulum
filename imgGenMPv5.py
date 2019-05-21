@@ -52,8 +52,9 @@ def calcPix(i):
     
     if (3*math.cos(Th_1) + math.cos(Th_2) < -2) | (.286<=j2<=.341) & (.265<=i2<=.372) | (.662<=j2<=.715) & (.667<=i2<=.742):
         return(-1)
-    current_state2 = [0,0,0,0] 
-    #print(i)
+    if (.335<i2<.67) & (.25<2<.66) | (.275<i2<.73) & (.375<j2<.625) | (.3<i2<.71) & (.325<j2<.68):
+        return(-1)
+    
     while abs((Th_1%(pi2)) - ((Th_2+math.pi)%(pi2))) > 0.03407:
         current_state = [Th_1, Th_2, a_1, a_2]
         k1 = LR(*current_state)
@@ -69,7 +70,6 @@ def calcPix(i):
         a_2 += R[3]
         step += 1
         if step >= cap:return(-1)
-    #print(i,R,step,type(R[0]))
     return(step)
 
 
@@ -83,15 +83,15 @@ if __name__ == '__main__':
     elif len(args) >= 3:
         im_dim = int(re.sub('[^0-9]', '', args[1]))
         mult = float(re.sub('[^0-9.]', '', args[2]))
-        thread_count = multiprocessing.cpu_count()*2
+        thread_count = multiprocessing.cpu_count()*4
     elif len(args) >= 2:
         im_dim = int(re.sub('[^0-9]', '', args[1]))
         mult = 1
-        thread_count = multiprocessing.cpu_count()*2
+        thread_count = multiprocessing.cpu_count()*4
     else:
         im_dim = 100.
         mult = 1.
-        thread_count = multiprocessing.cpu_count()*2
+        thread_count = multiprocessing.cpu_count()*4
     
     thread_count = min(thread_count,1010) #making sure to not use too many threads... I'm not sure if there's a concrete limit or if its determined by the OS or machine
     thread_count = min(thread_count,im_dim ** 2) #thread_count should always be less than the total number of pixels. 
@@ -113,7 +113,7 @@ if __name__ == '__main__':
     for i in range(0,len(pixel_list)): # Exporting those pixel values to pixels[][]
         pixels[int(i / im_dim)][i % im_dim] = pixel_list[i]
     
-    #del(pixel_list)
+    del(pixel_list)
     
     #Saving converting pixels and saving image
     pixels = pixels.tolist()
