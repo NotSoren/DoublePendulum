@@ -58,7 +58,7 @@ def calcPix(i):
     Th_2 = j2 * pi2
     
     #Defining zones to automatically skip over
-    if (3*math.cos(Th_1) + math.cos(Th_2) < -2) | (.286<=j2<=.341) & (.265<=i2<=.372) | (.662<=j2<=.715) & (.5<=i2<=.742):
+    if (3*math.cos(Th_1) + math.cos(Th_2) < -2.0048) | (.286<=j2<=.341) & (.265<=i2<=.372) | (.662<=j2<=.715) & (.5<=i2<=.742):
         return(-1)
 
     current_state = [0,0,0,0]
