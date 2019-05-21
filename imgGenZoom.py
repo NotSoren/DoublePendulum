@@ -27,6 +27,7 @@ def calcPix(i1,j1,out1,out2,out3):
     pixel = [0,0,0]
     Th_1 = (i1 / im_dim) * pi2
     Th_2 = (j1 / im_dim) * pi2
+    
     if (3*math.cos(Th_1) + math.cos(Th_2) < -2):
         out1.value = 255
         out2.value = 255
@@ -35,14 +36,29 @@ def calcPix(i1,j1,out1,out2,out3):
         return
 
     cap = 10000*mult
-    while abs((Th_1%(pi2)) - ((Th_2+math.pi)%(pi2))) > 0.03407:            
-        current_state = np.array([Th_1, Th_2, a_1, a_2])
+    current_state = [0,0,0,0]
+    current_state2 = [0,0,0,0]
+    cap = 10000*mult
+    R=[0,0,0,0]
+    
+    while abs(float(Th_1%(pi2)) - float((Th_2+math.pi)%(pi2))) >= 0.03407:            
+        current_state = [Th_1, Th_2, a_1, a_2]
         k1 = LR(*current_state)
-        k2 = LR(*(current_state + h * k1 / 2))
-        k3 = LR(*(current_state + h * k2 / 2))
-        k4 = LR(*(current_state + h * k3))
         
-        R = 1 / 6 * h * (k1 + 2 * k2 + 2 * k3 + k4)
+        for ar in range(0,4):
+            current_state2[ar] = current_state[ar] + h * k1[ar] / 2
+        k2 = LR(*current_state2)
+        
+        for ar in range(0,4):
+            current_state2[ar] = current_state[ar] + h * k2[ar] / 2
+        k3 = LR(*current_state2)
+        
+        for ar in range(0,4):
+            current_state2[ar] = current_state[ar] + h * k3[ar]
+        k4 = LR(*current_state2)
+        
+        for ar in range(0,4):
+            R[ar] = 1 / 6 * h * (k1[ar] + 2 * k2[ar] + 2 * k3[ar] + k4[ar])
         
         Th_1 += R[0]
         Th_2 += R[1]
@@ -51,7 +67,6 @@ def calcPix(i1,j1,out1,out2,out3):
         step += 1
         if step >= cap:
             break
-    #print(i1,j1,"s:", step)
     
     if step >= 10000*mult:
         pixel = (255, 255, 255)
