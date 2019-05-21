@@ -20,10 +20,12 @@ def LR(T1, T2, w1, w2):
     a2 = (F2 - alpha2 * F1) / (1 - alpha1 * alpha2)
     return([w1, w2, a1, a2])
 
-def stepToPix(step1):
-    step = step1
+def stepToPix(step):
+    failed_colour = (255,255,255)
     #print(step,end=',')
-    if (step >= 10000*mult) | (step == -1):
+    if step == -1:
+        o = failed_colour
+    elif step >= 10000*mult:
         o = (255, 255, 255)
     elif step > 1000*mult:
         o = [int(round(l*step/10000/mult)) for l in (0, 0, 255)]
@@ -43,19 +45,21 @@ def calcPix(i):
     h = 0.01
     a_1 = 0
     a_2 = 0
-
+    
     Th_1 = (i1 / im_dim) * pi2
     Th_2 = (j1 / im_dim) * pi2
     i2 = i1 / im_dim 
     j2 = j1 / im_dim
     
-    current_state = [0.,0.,0.,0.]
+    current_state = [0,0,0,0]
     current_state2 = [0,0,0,0]
     cap = 10000*mult
     R=[0.,0.,0.,0.]
-    if (3*math.cos(Th_1) + math.cos(Th_2) < -2) | (.286<=j2<=.341) & (.265<=i2<=.372) | (.662<=j2<=.715) & (.667<=i2<=.742):
+    if (3*math.cos(Th_1) + math.cos(Th_2) < -2) | (.286<=j2<=.341) & (.265<=i2<=.372) | (.662<=j2<=.715) & (.5<=i2<=.742):
         return(-1)
-    
+    if (.335<i2<.67) & (.25<2<.67) | (.275<i2<.73) & (.375<j2<.635) | (.3<i2<.71) & (.325<j2<.69):
+        return(-1)
+
     while abs(float(Th_1%(pi2)) - float((Th_2+math.pi)%(pi2))) >= 0.03407:            
         current_state = [Th_1, Th_2, a_1, a_2]
         k1 = LR(*current_state)
@@ -83,7 +87,7 @@ def calcPix(i):
         step += 1
         if step >= cap:
             #print(i,step)
-            return(-1)
+            return(cap)
     #print(i,step)
     return(step)
 
@@ -98,15 +102,15 @@ if __name__ == '__main__':
     elif len(args) >= 3:
         im_dim = int(re.sub('[^0-9]', '', args[1]))
         mult = float(re.sub('[^0-9.]', '', args[2]))
-        thread_count = multiprocessing.cpu_count()*2
+        thread_count = multiprocessing.cpu_count()*4
     elif len(args) >= 2:
         im_dim = int(re.sub('[^0-9]', '', args[1]))
         mult = 1
-        thread_count = multiprocessing.cpu_count()*2
+        thread_count = multiprocessing.cpu_count()*4
     else:
         im_dim = 100
         mult = 1
-        thread_count = multiprocessing.cpu_count()*2
+        thread_count = multiprocessing.cpu_count()*4
     
     thread_count = min(thread_count,1010) #making sure to not use too many threads... I'm not sure if there's a concrete limit or if its determined by the OS or machine
     thread_count = min(thread_count,im_dim ** 2) #thread_count should always be less than the total number of pixels. 
