@@ -54,7 +54,9 @@ def calcPix(i):
     current_state = [0,0,0,0]
     current_state2 = [0,0,0,0]
     cap = 10000*mult
-    R=[0.,0.,0.,0.]
+    R=[0,0,0,0]
+    
+    #Defining zones to automatically skip over
     if (3*math.cos(Th_1) + math.cos(Th_2) < -2) | (.286<=j2<=.341) & (.265<=i2<=.372) | (.662<=j2<=.715) & (.5<=i2<=.742):
         return(-1)
     if (.335<i2<.67) & (.25<2<.66) | (.275<i2<.73) & (.375<j2<.625) | (.3<i2<.71) & (.325<j2<.68):
