@@ -36,7 +36,7 @@ def stepToPix(step):
     elif step > 1*mult:
         o = [int(round(l*step/10/mult)) for l in (0, 255, 0)]
     else:
-        o = [int(round(l*step/1/mult)) for l in (0, 255, 255)]
+        o = [int(round(l*step/mult)) for l in (0, 255, 255)]
     return(o)
 
 def calcPix(i):
@@ -48,25 +48,27 @@ def calcPix(i):
     
     i2 = i1 / im_dim 
     j2 = j1 / im_dim
+
+    if (.335<i2<.67) & (.25<2<.66) | (.275<i2<.73) & (.375<j2<.625) | (.3<i2<.71) & (.325<j2<.68):
+        return(-1)
     
     a_1 = 0
     a_2 = 0
     Th_1 = i2 * pi2
     Th_2 = j2 * pi2
     
+    #Defining zones to automatically skip over
+    if (3*math.cos(Th_1) + math.cos(Th_2) < -2) | (.286<=j2<=.341) & (.265<=i2<=.372) | (.662<=j2<=.715) & (.5<=i2<=.742):
+        return(-1)
+
     current_state = [0,0,0,0]
     current_state2 = [0,0,0,0]
     cap = 10000*mult
     R=[0,0,0,0]
     
-    #Defining zones to automatically skip over
-    if (3*math.cos(Th_1) + math.cos(Th_2) < -2) | (.286<=j2<=.341) & (.265<=i2<=.372) | (.662<=j2<=.715) & (.5<=i2<=.742):
-        return(-1)
-    if (.335<i2<.67) & (.25<2<.66) | (.275<i2<.73) & (.375<j2<.625) | (.3<i2<.71) & (.325<j2<.68):
-        return(-1)
-    
     while abs(float(Th_1%(pi2)) - float((Th_2+math.pi)%(pi2))) >= 0.03407:            
         current_state = [Th_1, Th_2, a_1, a_2]
+        
         k1 = LR(*current_state)
         
         for ar in range(0,4):
@@ -123,8 +125,8 @@ if __name__ == '__main__':
         thread_count = multiprocessing.cpu_count()*4
         output = 1
     
-    thread_count = min(thread_count,1010) #making sure to not use too many threads... I'm not sure if there's a concrete limit or if its determined by the OS or machine
     thread_count = min(thread_count,im_dim ** 2) #thread_count should always be less than the total number of pixels. 
+    thread_count = min(thread_count,1010) #making sure to not use too many threads... I'm not sure if there's a concrete limit or if its determined by the OS or machine
     #print("threads:",thread_count)
     
     process_list = []
@@ -139,7 +141,7 @@ if __name__ == '__main__':
     with Pool(thread_count) as p: # Creating pool of worker threads
         process_list = p.map(calcPix, process_list) # Assigning threads to calculate step counts
         pixel_list = p.map(stepToPix, process_list) # Turning step counts into pixel values
-        del(process_list)
+    del(process_list)
     
     for i in range(0,len(pixel_list)): # Exporting those pixel values to pixels[][]
         pixels[int(i / im_dim)][i % im_dim] = pixel_list[i]
@@ -155,7 +157,6 @@ if __name__ == '__main__':
         name = "doot"+str(im_dim)+"MT"+re.sub('[.]', '_', str(float(mult)))+".png"
     else:
         name = "outputs/doot"+str(im_dim)+"MT"+re.sub('[.]', '_', str(float(mult)))+".png" # creating image title
-    
     if output != 0:im2.save(name)
     
     end = time.time()
