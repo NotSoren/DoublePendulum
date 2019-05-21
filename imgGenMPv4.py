@@ -50,6 +50,7 @@ def calcPix(i):
     j2 = j1 / im_dim
 
     if (.335<i2<.67) & (.25<2<.66) | (.275<i2<.73) & (.375<j2<.625) | (.3<i2<.71) & (.325<j2<.68):
+        #gc.collect()
         return(-1)
     
     a_1 = 0
@@ -59,6 +60,7 @@ def calcPix(i):
     
     #Defining zones to automatically skip over
     if (3*math.cos(Th_1) + math.cos(Th_2) < -2.0048) | (.286<=j2<=.341) & (.265<=i2<=.372) | (.662<=j2<=.715) & (.5<=i2<=.742):
+        #gc.collect()
         return(-1)
 
     current_state = [0,0,0,0]
@@ -112,17 +114,17 @@ if __name__ == '__main__':
     elif len(args) >= 3:
         im_dim = int(re.sub('[^0-9]', '', args[1]))
         mult = float(re.sub('[^0-9.]', '', args[2]))
-        thread_count = multiprocessing.cpu_count()*4
+        thread_count = multiprocessing.cpu_count()*2
         output = 1
     elif len(args) >= 2:
         im_dim = int(re.sub('[^0-9]', '', args[1]))
         mult = 1
-        thread_count = multiprocessing.cpu_count()*4
+        thread_count = multiprocessing.cpu_count()*2
         output = 1
     else:
         im_dim = 100
         mult = 1
-        thread_count = multiprocessing.cpu_count()*4
+        thread_count = multiprocessing.cpu_count()*2
         output = 1
     
     thread_count = min(thread_count,im_dim ** 2) #thread_count should always be less than the total number of pixels. 
@@ -140,15 +142,14 @@ if __name__ == '__main__':
     
     with Pool(thread_count) as p: # Creating pool of worker threads
         process_list = p.map(calcPix, process_list) # Assigning threads to calculate step counts
-        pixel_list = p.map(stepToPix, process_list) # Turning step counts into pixel values
+        gc.collect()
+        process_list = p.map(stepToPix, process_list) # Turning step counts into pixel values
+    
+    for i in range(0,len(process_list)): # Exporting those pixel values to pixels[][]
+        pixels[int(i / im_dim)][i % im_dim] = process_list[i]
     del(process_list)
     
-    for i in range(0,len(pixel_list)): # Exporting those pixel values to pixels[][]
-        pixels[int(i / im_dim)][i % im_dim] = pixel_list[i]
-    del(pixel_list)
-    
     #Converting pixels and saving image
-    #pixels = pixels.tolist()
     pixels = [item for sublist in pixels for item in sublist]
     pixels = [tuple(l) for l in pixels]
     im2 = Image.new("RGB", (im_dim, im_dim))
