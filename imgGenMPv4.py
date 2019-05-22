@@ -127,6 +127,8 @@ if __name__ == '__main__':
         thread_count = multiprocessing.cpu_count()*2
         output = 1
     
+    total_start = time.time() # Starting timer
+    
     thread_count = min(thread_count,im_dim ** 2) #thread_count should always be less than the total number of pixels. 
     thread_count = min(thread_count,1010) #making sure to not use too many threads... I'm not sure if there's a concrete limit or if its determined by the OS or machine
     #print("threads:",thread_count)
@@ -134,19 +136,15 @@ if __name__ == '__main__':
     process_list = []
     for i in range(0, im_dim ** 2):process_list.append(i) # Creating 1d array for worker pool run through
     print("process_list",time.time()-time_part)
-    time_part = time.time()
-    #pixels = np.zeros((im_dim, im_dim, 3)) # creating empty 3d array for pixel data
-    #pixels = pixels.astype(int)
-    #pixels = pixels.tolist()
-    pixels = [[[0 for k in range(3)] for j in range(im_dim)] for i in range(im_dim)]
-    print("list generation",time.time()-time_part)
-    
-    total_start = time.time() # Starting timer
     
     with Pool(thread_count) as p: # Creating pool of worker threads
         process_list = p.map(calcPix, process_list) # Assigning threads to calculate step counts
         gc.collect()
         process_list = p.map(stepToPix, process_list) # Turning step counts into pixel values
+    
+    time_part = time.time() # Generating 3d pixel array
+    pixels = [[[0 for k in range(3)] for j in range(im_dim)] for i in range(im_dim)]
+    print("list generation",time.time()-time_part)
     
     for i in range(0,len(process_list)): # Exporting those pixel values to pixels[][]
         pixels[int(i / im_dim)][i % im_dim] = process_list[i]
