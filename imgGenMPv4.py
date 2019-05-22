@@ -153,6 +153,7 @@ if __name__ == '__main__':
     del(process_list)
     
     #Converting pixels and saving image
+    time_part = time.time()
     pixels = [item for sublist in pixels for item in sublist]
     pixels = [tuple(l) for l in pixels]
     im2 = Image.new("RGB", (im_dim, im_dim))
@@ -162,7 +163,7 @@ if __name__ == '__main__':
     else:
         name = "outputs/doot"+str(im_dim)+"MT"+re.sub('[.]', '_', str(float(mult)))+".png" # creating image title
     if output != 0:im2.save(name)
-    
+    print("image generation",time.time()-time_part)
     end = time.time()
     
     total = end-total_start
