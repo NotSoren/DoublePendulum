@@ -135,10 +135,11 @@ if __name__ == '__main__':
     for i in range(0, im_dim ** 2):process_list.append(i) # Creating 1d array for worker pool run through
     print("process_list",time.time()-time_part)
     time_part = time.time()
-    pixels = np.zeros((im_dim, im_dim, 3)) # creating empty 3d array for pixel data
-    pixels = pixels.astype(int)
-    pixels = pixels.tolist()
-    print("Numpy list generation",time.time()-time_part)
+    #pixels = np.zeros((im_dim, im_dim, 3)) # creating empty 3d array for pixel data
+    #pixels = pixels.astype(int)
+    #pixels = pixels.tolist()
+    pixels = [[[0 for k in range(3)] for j in range(im_dim)] for i in range(im_dim)]
+    print("list generation",time.time()-time_part)
     
     total_start = time.time() # Starting timer
     
