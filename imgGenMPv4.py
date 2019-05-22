@@ -138,7 +138,7 @@ if __name__ == '__main__':
     pixels = np.zeros((im_dim, im_dim, 3)) # creating empty 3d array for pixel data
     pixels = pixels.astype(int)
     pixels = pixels.tolist()
-    print("process_list",time.time()-time_part)
+    print("Numpy list generation",time.time()-time_part)
     
     total_start = time.time() # Starting timer
     
