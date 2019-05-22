@@ -130,13 +130,15 @@ if __name__ == '__main__':
     thread_count = min(thread_count,im_dim ** 2) #thread_count should always be less than the total number of pixels. 
     thread_count = min(thread_count,1010) #making sure to not use too many threads... I'm not sure if there's a concrete limit or if its determined by the OS or machine
     #print("threads:",thread_count)
-    
+    time_part = time.time()
     process_list = []
     for i in range(0, im_dim ** 2):process_list.append(i) # Creating 1d array for worker pool run through
-    
+    print("process_list",time.time()-time_part)
+    time_part = time.time()
     pixels = np.zeros((im_dim, im_dim, 3)) # creating empty 3d array for pixel data
     pixels = pixels.astype(int)
     pixels = pixels.tolist()
+    print("process_list",time.time()-time_part)
     
     total_start = time.time() # Starting timer
     
