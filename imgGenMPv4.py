@@ -40,6 +40,7 @@ def stepToPix(step):
     return(o)
 
 def calcPix(i):
+    if i == 0: return(-1)
     i1 = int(i / im_dim) # y pos
     j1 = i % im_dim # x pos
     pi2 = 2 * math.pi
@@ -48,7 +49,7 @@ def calcPix(i):
     
     i2 = i1 / im_dim 
     j2 = j1 / im_dim
-
+    
     if (.335<i2<.67) & (.25<2<.66) | (.275<i2<.73) & (.375<j2<.625) | (.3<i2<.71) & (.325<j2<.68):
         #gc.collect()
         return(-1)
@@ -137,18 +138,26 @@ if __name__ == '__main__':
     for i in range(0, im_dim ** 2):process_list.append(i) # Creating 1d array for worker pool run through
     print("process_list",time.time()-time_part)
     
+    time_part = time.time()
     with Pool(thread_count) as p: # Creating pool of worker threads
         process_list = p.map(calcPix, process_list) # Assigning threads to calculate step counts
         gc.collect()
+        print("processing steps",time.time()-time_part)
+        
+        time_part = time.time()
         process_list = p.map(stepToPix, process_list) # Turning step counts into pixel values
+        print("processing pixels",time.time()-time_part)
+    
     
     time_part = time.time() # Generating 3d pixel array
     pixels = [[[0 for k in range(3)] for j in range(im_dim)] for i in range(im_dim)]
     print("list generation",time.time()-time_part)
     
+    time_part = time.time()
     for i in range(0,len(process_list)): # Exporting those pixel values to pixels[][]
         pixels[int(i / im_dim)][i % im_dim] = process_list[i]
     del(process_list)
+    print("format list",time.time()-time_part)
     
     #Converting pixels and saving image
     time_part = time.time()
