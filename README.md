@@ -18,4 +18,4 @@ Then you can run the `imgGenMPv4.py` or `imgGenZoom.py` scripts as normal user. 
 
 `imgGenMPv3.py` is another deprecated version. It's not pooled, and only processes one row at a time. 
 
-tl;dr: use `imgGenMPv4.py dimension depth threads output` with pypy (recommended), or cpython3 (slower). If you want to zoom in, use imgGenZoom.py. It's slower, but will be optimised in the future. 
+tl;dr: use `imgGenMPv4.py dimension depth threads output` with pypy (recommended), or cpython3 (slower). If you want to zoom in, use imgGenZoom.py. You can choose the areas to zoom into at lines 132-135
