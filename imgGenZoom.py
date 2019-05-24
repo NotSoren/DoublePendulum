@@ -129,10 +129,10 @@ if __name__ == '__main__':
     total_start = time.time() # Starting timer
     
     
-    xmin = int(0.86 * im_dim)
-    xmax = int(.956 * im_dim)
-    ymin = int(0.6 * im_dim)
-    ymax = int(.7 * im_dim)
+    xmin = int(0.81 * im_dim)
+    xmax = int(.965 * im_dim)
+    ymin = int(0.63 * im_dim)
+    ymax = int(.8 * im_dim)
     
     xr = xmax - xmin
     yr = ymax - ymin
@@ -146,8 +146,8 @@ if __name__ == '__main__':
     time_part = time.time()
     process_list = []
     i=0
-    for x in range(0, im_dim):
-        for y in range(0,im_dim):
+    for y in range(0, im_dim):
+        for x in range(0,im_dim):
             if (ymin<=y<ymax) & (xmin<=x<xmax):
                 process_list.append(i) # Creating 1d array for worker pool run through
             i+=1
@@ -183,7 +183,7 @@ if __name__ == '__main__':
     time_part = time.time()
     pixels = [item for sublist in pixels for item in sublist]
     pixels = [tuple(l) for l in pixels]
-    im2 = Image.new("RGB", (yr, xr))
+    im2 = Image.new("RGB", (xr, yr))
     im2.putdata(pixels)
     if output == 2:
         name = "doot"+str(im_dim)+"MT"+re.sub('[.]', '_', str(float(mult)))+".png"
