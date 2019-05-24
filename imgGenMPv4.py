@@ -134,6 +134,7 @@ if __name__ == '__main__':
     thread_count = min(thread_count,1010) #making sure to not use too many threads... I'm not sure if there's a concrete limit or if its determined by the OS or machine
     #print("threads:",thread_count)
     time_part = time.time()
+    
     process_list = []
     for i in range(0, im_dim ** 2):process_list.append(i) # Creating 1d array for worker pool run through
     print("process_list",time.time()-time_part)
