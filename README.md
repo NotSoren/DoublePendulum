@@ -10,7 +10,7 @@ Run
 
 `sudo install.sh`
 
-Then you can run the `imgGenMPv4.py` or `imgGenZoom.py` scripts as normal user. Please note that the first argument is the resolution to the map, the second argument is a multiplier for how long it will simulate before skipping that spot and moving on (defaults to 1 if not specified), and the third argument is the number of processing threads to use (defaults to `multiprocessing.cpu_count()*4` if not specified). arg 4 is optional. 0 gives no output, 1 outputs to the folder named outputs, and 2 outputs directly into the folder the program is run from. 
+Then you can run the `imgGenMPv4.py` or `imgGenZoom.py` scripts as normal user. Please note that the first argument is the resolution to the map, the second argument is a multiplier for how long it will simulate before skipping that spot and moving on (defaults to 1 if not specified), and the third argument is the number of processing threads to use (defaults to `multiprocessing.cpu_count()*2` if not specified). arg 4 is optional. 0 gives no output, 1 outputs to the folder named outputs, and 2 outputs directly into the folder the program is run from. 
 
 `imgGenMPv4.py` is the current recommended version. It avoids using numPy to allow use with pypy, speeding up the execution process. In my testing, it is between 2 and 5 times faster than `imgGenMPv5.py` (the previously recommended version) on cpython3.6, and several orders of magnitude faster when using pypy3.6.0. 
 
