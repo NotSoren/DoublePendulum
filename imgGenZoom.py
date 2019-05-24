@@ -165,20 +165,25 @@ if __name__ == '__main__':
     
     
     time_part = time.time() # Generating 3d pixel array
-    pixels = [[[0 for k in range(3)] for j in range(yr)] for i in range(xr)]
+    pixels = [[[0 for k in range(3)] for j in range(xr)] for i in range(yr)]
     print("list generation",time.time()-time_part)
     
     time_part = time.time()
-    for i in range(0,len(process_list)): # Exporting those pixel values to pixels[][]
-        pixels[int(i / yr)][i % xr] = process_list[i]
+    i = 0
+    for y in range(0,yr):
+        for x in range(0,xr):
+            pixels[y][x] = process_list[i]
+            i+=1
+            
+    #for i in range(0,len(process_list)): # Exporting those pixel values to pixels[][]
+        #pixels[int(i / (yr-1))][i % (xr-1)] = process_list[i]
     del(process_list)
     print("format list",time.time()-time_part)
-    
     #Converting pixels and saving image
     time_part = time.time()
     pixels = [item for sublist in pixels for item in sublist]
     pixels = [tuple(l) for l in pixels]
-    im2 = Image.new("RGB", (xr, yr))
+    im2 = Image.new("RGB", (yr, xr))
     im2.putdata(pixels)
     if output == 2:
         name = "doot"+str(im_dim)+"MT"+re.sub('[.]', '_', str(float(mult)))+".png"
