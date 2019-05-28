@@ -100,6 +100,7 @@ def calcPix(i):
 
 
 if __name__ == '__main__':
+    total_start = time.time() # Starting timer
     
     args = sys.argv # Collecting arguments
     if len(args) >= 5:
@@ -127,8 +128,6 @@ if __name__ == '__main__':
         mult = 1
         thread_count = multiprocessing.cpu_count()*2
         output = 1
-    
-    total_start = time.time() # Starting timer
     
     thread_count = min(thread_count,im_dim ** 2) #thread_count should always be less than the total number of pixels. 
     thread_count = min(thread_count,1010) #making sure to not use too many threads... I'm not sure if there's a concrete limit or if its determined by the OS or machine
