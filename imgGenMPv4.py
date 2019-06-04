@@ -116,17 +116,17 @@ if __name__ == '__main__':
     elif len(args) >= 3:
         im_dim = int(re.sub('[^0-9]', '', args[1]))
         mult = float(re.sub('[^0-9.]', '', args[2]))
-        thread_count = multiprocessing.cpu_count()*2
+        thread_count = multiprocessing.cpu_count()
         output = 1
     elif len(args) >= 2:
         im_dim = int(re.sub('[^0-9]', '', args[1]))
         mult = 1
-        thread_count = multiprocessing.cpu_count()*2
+        thread_count = multiprocessing.cpu_count()
         output = 1
     else:
         im_dim = 100
         mult = 1
-        thread_count = multiprocessing.cpu_count()*2
+        thread_count = multiprocessing.cpu_count()
         output = 1
     
     thread_count = min(thread_count,im_dim ** 2) #thread_count should always be less than the total number of pixels. 
