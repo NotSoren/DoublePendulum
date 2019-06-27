@@ -23,7 +23,9 @@ def LR(T1, T2, w1, w2):
 def stepToPix(step):
     failed_colour = (255,255,255)
     #print(step,end=',')
-    if step == -1:
+    if step == -2:
+        o = (-1,-1,-1)
+    elif step == -1:
         o = failed_colour
     elif step >= 10000*mult:
         o = (255, 255, 255)
@@ -33,13 +35,14 @@ def stepToPix(step):
         o = [int(round(l*step/1000/mult)) for l in (255, 0, 255)]
     elif step > 10*mult:
         o = [int(round(l*step/100/mult)) for l in (255, 0, 0)]
-    elif step > 1*mult:
+    elif step > mult:
         o = [int(round(l*step/10/mult)) for l in (0, 255, 0)]
     else:
         o = [int(round(l*step/mult)) for l in (0, 255, 255)]
     return(o)
 
 def calcPix(i):
+    if i == -1: return(-2)
     if i == 0: return(-1)
     i1 = int(i / im_dim) # y pos
     j1 = i % im_dim # x pos
@@ -98,6 +101,13 @@ def calcPix(i):
             return(cap)
     return(step)
 
+"""
+(1,1) == (max,max)
+(1,2) == (max, max - 1)
+(2,2) == (max - 1,max-1)
+(x,y) == (max - x + 1, max - y + 1)
+
+"""
 
 if __name__ == '__main__':
     total_start = time.time() # Starting timer
@@ -135,7 +145,14 @@ if __name__ == '__main__':
     time_part = time.time()
     
     process_list = []
-    for i in range(0, im_dim ** 2):process_list.append(i) # Creating 1d array for worker pool run through
+    #for i in range(0, im_dim ** 2):process_list.append(i) # Creating 1d array for worker pool run through
+    i = 0
+    for y in range(0, im_dim):
+        for x in range(0, im_dim):
+            if (x != 0) & (y <= math.floor((im_dim - 1) / 2)) & (y != 0):process_list.append(-1)
+            else:process_list.append(i)
+            i+=1
+            
     print("process_list",time.time()-time_part)
     
     time_part = time.time()
@@ -154,11 +171,16 @@ if __name__ == '__main__':
     print("list generation",time.time()-time_part)
     
     time_part = time.time()
-    for i in range(0,len(process_list)): # Exporting those pixel values to pixels[][]
-        pixels[int(i / im_dim)][i % im_dim] = process_list[i]
+    for i in range(len(process_list) - 1,-1,-1): # Exporting those pixel values to pixels[][]
+        y = int(i / im_dim) # y pos
+        x = i % im_dim # x pos
+        pixels[y][x] = process_list[i]
+        if pixels[y][x] == (-1,-1,-1):
+            print("switch",y,x,",",im_dim - y,im_dim - x)
+            pixels[y][x] = pixels[im_dim - y][im_dim - x]
+            
     del(process_list)
     print("format list",time.time()-time_part)
-    
     #Converting pixels and saving image
     time_part = time.time()
     pixels = [item for sublist in pixels for item in sublist]
@@ -177,3 +199,4 @@ if __name__ == '__main__':
     print('time:',round((total)*1000)/1000,'s')
     print('each:',round((total/(im_dim**2))*100000)/100000,'s')
     gc.collect()
+    
