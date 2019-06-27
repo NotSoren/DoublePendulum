@@ -99,6 +99,8 @@ def calcPix(i):
     return(step)
 
 if __name__ == '__main__':
+    total_start = time.time() # Starting timer
+    
     args = sys.argv # Collecting arguments
     if len(args) >= 5:
         im_dim = int(re.sub('[^0-9]', '', args[1]))
@@ -126,28 +128,25 @@ if __name__ == '__main__':
         thread_count = multiprocessing.cpu_count()*2
         output = 1
     
-    total_start = time.time() # Starting timer
-    
-    
-    xmin = int(0.86 * im_dim)
-    xmax = int(.956 * im_dim)
-    ymin = int(0.6 * im_dim)
-    ymax = int(.7 * im_dim)
+    xmin = int(0.81 * im_dim)
+    xmax = int(.965 * im_dim)
+    ymin = int(0.63 * im_dim)
+    ymax = int(.8 * im_dim)
     
     xr = xmax - xmin
     yr = ymax - ymin
 
     thread_count = min(thread_count, xr * yr) #thread_count should always be less than the total number of pixels. 
     thread_count = min(thread_count,1010) #making sure to not use too many threads... I'm not sure if there's a concrete limit or if its determined by the OS or machine
-    print("threads:",thread_count)
+    #print("threads:",thread_count)
     
-    print(xr,yr)
+    print("x:"+str(xr)+", y:"+str(yr))
     
     time_part = time.time()
     process_list = []
     i=0
-    for x in range(0, im_dim):
-        for y in range(0,im_dim):
+    for y in range(0, im_dim):
+        for x in range(0,im_dim):
             if (ymin<=y<ymax) & (xmin<=x<xmax):
                 process_list.append(i) # Creating 1d array for worker pool run through
             i+=1
@@ -176,14 +175,14 @@ if __name__ == '__main__':
             i+=1
             
     #for i in range(0,len(process_list)): # Exporting those pixel values to pixels[][]
-        #pixels[int(i / (yr-1))][i % (xr-1)] = process_list[i]
+        #pixels[int(i / (yr-1))][i % xr] = process_list[i]
     del(process_list)
     print("format list",time.time()-time_part)
     #Converting pixels and saving image
     time_part = time.time()
     pixels = [item for sublist in pixels for item in sublist]
     pixels = [tuple(l) for l in pixels]
-    im2 = Image.new("RGB", (yr, xr))
+    im2 = Image.new("RGB", (xr, yr))
     im2.putdata(pixels)
     if output == 2:
         name = "doot"+str(im_dim)+"MT"+re.sub('[.]', '_', str(float(mult)))+".png"
