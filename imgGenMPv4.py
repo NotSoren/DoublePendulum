@@ -145,10 +145,9 @@ if __name__ == '__main__':
     time_part = time.time()
     
     process_list = []
-    #for i in range(0, im_dim ** 2):process_list.append(i) # Creating 1d array for worker pool run through
     i = 0
     for y in range(0, im_dim):
-        for x in range(0, im_dim):
+        for x in range(0, im_dim): # create 1d array for worker pool, telling worker pool to skip mirrored pixels
             if (x != 0) & (y <= math.floor((im_dim - 1) / 2)) & (y != 0):process_list.append(-1)
             else:process_list.append(i)
             i+=1
@@ -175,8 +174,7 @@ if __name__ == '__main__':
         y = int(i / im_dim) # y pos
         x = i % im_dim # x pos
         pixels[y][x] = process_list[i]
-        if pixels[y][x] == (-1,-1,-1):
-            print("switch",y,x,",",im_dim - y,im_dim - x)
+        if pixels[y][x] == (-1,-1,-1): # copy over mirrored pixels
             pixels[y][x] = pixels[im_dim - y][im_dim - x]
             
     del(process_list)
