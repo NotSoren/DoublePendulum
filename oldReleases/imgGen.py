@@ -51,7 +51,7 @@ for i in rangeTmp:
         
         if (3*math.cos(Th_1) + math.cos(Th_2) < -2)|(left==0):
             left += 1
-            pixels[i][j] = (255, 255, 255)
+            pixels[i][j] = (0, 0, 0)
             print(" Skipped")
             continue
         
