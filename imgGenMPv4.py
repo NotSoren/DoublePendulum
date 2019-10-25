@@ -102,11 +102,11 @@ def calcPix(i):
     return(step)
 
 """
+# I don't remember what this section was for, but I clearly thought it was important enough to comment in --S
 (1,1) == (max,max)
 (1,2) == (max, max - 1)
 (2,2) == (max - 1,max-1)
 (x,y) == (max - x + 1, max - y + 1)
-
 """
 
 if __name__ == '__main__':
@@ -161,7 +161,7 @@ if __name__ == '__main__':
         print("processing steps",time.time()-time_part)
         
         time_part = time.time()
-        process_list = p.map(stepToPix, process_list) # Turning step counts into pixel values
+        process_list = p.map(stepToPix, process_list) # Turning step counts into pixel colours
         print("processing pixels",time.time()-time_part)
     
     
@@ -174,11 +174,12 @@ if __name__ == '__main__':
         y = int(i / im_dim) # y pos
         x = i % im_dim # x pos
         pixels[y][x] = process_list[i]
-        if pixels[y][x] == (-1,-1,-1): # copy over mirrored pixels
+        if pixels[y][x] == (-1,-1,-1): # copy over mirrored pixels if this pix is already taken care of
             pixels[y][x] = pixels[im_dim - y][im_dim - x]
-            
+    
     del(process_list)
     print("format list",time.time()-time_part)
+    
     #Converting pixels and saving image
     time_part = time.time()
     pixels = [item for sublist in pixels for item in sublist]

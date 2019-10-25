@@ -4,16 +4,6 @@ from PIL import Image
 import sys
 import re
 
-
-args = sys.argv
-if len(args) >= 2:
-    im_dim = int(re.sub('[^0-9]', '', args[1]))
-else:
-    im_dim = 75
-
-pixels = np.zeros((im_dim, im_dim, 3))
-pixels = pixels.astype(int)
-
 def LR(T1, T2, w1, w2):
     alpha1 = math.cos(T1 - T2) / 2
     alpha2 = math.cos(T1 - T2)
@@ -25,6 +15,15 @@ def LR(T1, T2, w1, w2):
     a2 = (F2 - alpha2 * F1) / (1 - alpha1 * alpha2)
 
     return np.array([w1, w2, a1, a2])
+
+args = sys.argv
+if len(args) >= 2:
+    im_dim = int(re.sub('[^0-9]', '', args[1]))
+else:
+    im_dim = 75
+
+pixels = np.zeros((im_dim, im_dim, 3))
+pixels = pixels.astype(int)
 
 left = 0
 

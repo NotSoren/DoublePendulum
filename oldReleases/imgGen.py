@@ -72,21 +72,21 @@ for i in rangeTmp:
             
             step += 1
             # | (time.time()-start >= .5)
-            if (step >= 10000):
+            if (step >= 100000):
                 break
         #end = time.time()
         #print(" s:", step,"t:",end-start,"i:",left)
         print("s:", step,"i:",left)
-        if step >= 10000:
+        if step >= 100000:
             pixels[i][j] = (255, 255, 255)
+        elif step > 10000:
+            pixels[i][j] = [int(round(l*step/100000)) for l in (0, 0, 255)]
         elif step > 1000:
-            pixels[i][j] = [int(round(l*step/10000)) for l in (0, 0, 255)]
+            pixels[i][j] = [int(round(l*step/10000)) for l in (255, 0, 255)]
         elif step > 100:
-            pixels[i][j] = [int(round(l*step/1000)) for l in (255, 0, 255)]
-        elif step > 10:
-            pixels[i][j] = [int(round(l*step/100)) for l in (255, 0, 0)]
+            pixels[i][j] = [int(round(l*step/1000)) for l in (255, 0, 0)]
         else:
-            pixels[i][j] = [int(round(l*step/10)) for l in (0, 255, 0)]
+            pixels[i][j] = [int(round(l*step/100)) for l in (0, 255, 0)]
         left += 1
         if run == False:
             pixels[i][j] = (255, 255, 255)
