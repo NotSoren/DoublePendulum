@@ -37,3 +37,15 @@ time: 38.408 s
 each: 0.00234 s
 
 pypy3.6.0 is ~9.25x faster than cpython3.6 in imgGenMPv4.py on a 128x128 image
+
+
+
+Initial, with centre exclusion. Python 3.6.8
+real    9m0.870s
+
+Gen4, with centre exclusion, MT, reflection detection. Python 3.6.8
+real    0m5.227s
+
+Gen4, with centre exclusion, MT, reflection detection. PyPy 7.1.0-beta0
+real    0m1.164s
+
