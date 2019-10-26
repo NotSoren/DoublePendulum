@@ -35,16 +35,11 @@ pi2 = 2 * math.pi
 for i in rangeTmp:
     for j in rangeTmp:
         print(i,j,end=" ")
-        run = True
         step = 0
         h = 0.01
         
         a_1 = 0
         a_2 = 0
-        """
-        if (i == math.floor(im_dim / 2)) & (j != 0):
-            run = False
-        """
         
         Th_1 = (i / im_dim) * pi2
         Th_2 = (j / im_dim) * pi2
@@ -77,6 +72,7 @@ for i in rangeTmp:
         #end = time.time()
         #print(" s:", step,"t:",end-start,"i:",left)
         print("s:", step,"i:",left)
+        left += 1
         if step >= 100000:
             pixels[i][j] = (255, 255, 255)
         elif step > 10000:
@@ -87,15 +83,15 @@ for i in rangeTmp:
             pixels[i][j] = [int(round(l*step/1000)) for l in (255, 0, 0)]
         else:
             pixels[i][j] = [int(round(l*step/100)) for l in (0, 255, 0)]
-        left += 1
-        if run == False:
-            pixels[i][j] = (255, 255, 255)
+
+"""
     pixel2 = pixels.tolist()
     pixel2 = [item for sublist in pixel2 for item in sublist]
     pixel2 = [tuple(l) for l in pixel2]
     im3 = Image.new("RGB", (im_dim, im_dim))
     im3.putdata(pixel2)
     im3.save("tmp1.png")
+"""
 
 pixels = pixels.tolist()
 pixels = [item for sublist in pixels for item in sublist]
