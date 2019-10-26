@@ -174,7 +174,7 @@ if __name__ == '__main__':
         y = int(i / im_dim) # y pos
         x = i % im_dim # x pos
         pixels[y][x] = process_list[i]
-        if pixels[y][x] == (-1,-1,-1): # copy over mirrored pixels if this pix is already taken care of
+        if pixels[y][x] == (-1,-1,-1): # copy over mirrored pixels if this pixel is already taken care of
             pixels[y][x] = pixels[im_dim - y][im_dim - x]
     
     del(process_list)
