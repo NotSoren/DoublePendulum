@@ -1,16 +1,13 @@
 import math
-#import numpy as np
 from PIL import Image
 import sys
 import re
 import multiprocessing
 import time
-#from termcolor import colored, cprint
 import gc
 import os
 from multiprocessing import Pool
 step_div = 1
-
 
 def LR(T1, T2, w1, w2):
     alpha2 = math.cos(T1 - T2)
@@ -56,7 +53,6 @@ def calcPix(i):
     j2 = j1 / im_dim
     
     if (.335<i2<.67) & (.25<2<.66) | (.275<i2<.73) & (.375<j2<.625) | (.3<i2<.71) & (.325<j2<.68):
-        #gc.collect()
         return(-1)
     
     a_1 = 0
@@ -66,7 +62,6 @@ def calcPix(i):
     
     #Defining zones to automatically skip over
     if (3*math.cos(Th_1) + math.cos(Th_2) < -2.0048) | (.286<=j2<=.341) & (.265<=i2<=.372) | (.662<=j2<=.715) & (.5<=i2<=.742):
-        #gc.collect()
         return(-1)
 
     current_state = [0,0,0,0]
@@ -199,5 +194,3 @@ if __name__ == '__main__':
     total = end-total_start
     print('time:',round((total)*1000)/1000,'s')
     print('each:',round((total/(im_dim**2))*100000)/100000,'s')
-    gc.collect()
-    
