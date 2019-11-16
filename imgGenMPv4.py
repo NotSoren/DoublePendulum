@@ -9,6 +9,8 @@ import time
 import gc
 import os
 from multiprocessing import Pool
+step_div = 1
+
 
 def LR(T1, T2, w1, w2):
     alpha2 = math.cos(T1 - T2)
@@ -48,7 +50,7 @@ def calcPix(i):
     j1 = i % im_dim # x pos
     pi2 = 2 * math.pi
     step = 0
-    h = 0.01 # how much should the timer advance during one iteration?
+    h = 0.01 / step_div # how much should the timer advance during one iteration?
     
     i2 = i1 / im_dim 
     j2 = j1 / im_dim
@@ -96,13 +98,13 @@ def calcPix(i):
         Th_2 += R[1]
         a_1 += R[2]
         a_2 += R[3]
-        step += 1
+        step += 1/step_div
         if step >= cap:
             return(cap)
     return(step)
 
 """
-# I don't remember what this section was for, but I clearly thought it was important enough to comment in --S
+# I don't remember what this section was for, but I clearly thought it was important enough to comment in
 (1,1) == (max,max)
 (1,2) == (max, max - 1)
 (2,2) == (max - 1,max-1)
@@ -152,7 +154,7 @@ if __name__ == '__main__':
             else:process_list.append(i)
             i+=1
             
-    print("process_list",time.time()-time_part)
+    print("create jobs",time.time()-time_part)
     
     time_part = time.time()
     with Pool(thread_count) as p: # Creating pool of worker threads
