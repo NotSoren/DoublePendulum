@@ -7,7 +7,7 @@ import time
 import gc
 import os
 from multiprocessing import Pool
-step_div = 1
+step_div = 2
 
 def LR(T1, T2, w1, w2):
     alpha2 = math.cos(T1 - T2)
@@ -48,18 +48,18 @@ def calcPix(i):
     pi2 = 2 * math.pi
     step = 0
     h = 0.01 / step_div # how much should the timer advance during one iteration?
-    
-    i2 = i1 / im_dim 
+
+    i2 = i1 / im_dim
     j2 = j1 / im_dim
-    
+
     if (.335<i2<.67) & (.25<2<.66) | (.275<i2<.73) & (.375<j2<.625) | (.3<i2<.71) & (.325<j2<.68):
         return(-1)
-    
+
     a_1 = 0
     a_2 = 0
     Th_1 = i2 * pi2
     Th_2 = j2 * pi2
-    
+
     #Defining zones to automatically skip over
     if (3*math.cos(Th_1) + math.cos(Th_2) < -2.0048) | (.286<=j2<=.341) & (.265<=i2<=.372) | (.662<=j2<=.715) & (.5<=i2<=.742):
         return(-1)
@@ -68,27 +68,27 @@ def calcPix(i):
     current_state2 = [0,0,0,0]
     cap = 10000*mult
     R=[0,0,0,0]
-    
-    while abs(float(Th_1%(pi2)) - float((Th_2+math.pi)%(pi2))) >= 0.03407:            
+
+    while abs(float(Th_1%(pi2)) - float((Th_2+math.pi)%(pi2))) >= 0.03407:
         current_state = [Th_1, Th_2, a_1, a_2]
-        
+
         k1 = LR(*current_state)
-        
+
         for ar in range(0,4):
             current_state2[ar] = current_state[ar] + h * k1[ar] / 2
         k2 = LR(*current_state2)
-        
+
         for ar in range(0,4):
             current_state2[ar] = current_state[ar] + h * k2[ar] / 2
         k3 = LR(*current_state2)
-        
+
         for ar in range(0,4):
             current_state2[ar] = current_state[ar] + h * k3[ar]
         k4 = LR(*current_state2)
-        
+
         for ar in range(0,4):
             R[ar] = 1 / 6 * h * (k1[ar] + 2 * k2[ar] + 2 * k3[ar] + k4[ar])
-        
+
         Th_1 += R[0]
         Th_2 += R[1]
         a_1 += R[2]
@@ -108,7 +108,7 @@ def calcPix(i):
 
 if __name__ == '__main__':
     total_start = time.time() # Starting timer
-    
+
     args = sys.argv # Collecting arguments
     if len(args) >= 5:
         im_dim = int(re.sub('[^0-9]', '', args[1]))
@@ -128,19 +128,19 @@ if __name__ == '__main__':
     elif len(args) >= 2:
         im_dim = int(re.sub('[^0-9]', '', args[1]))
         mult = 1
-        thread_count = multiprocessing.cpu_count()
+        thread_count = multiprocessing.cpu_count() + 2
         output = 1
     else:
         im_dim = 100
         mult = 1
-        thread_count = multiprocessing.cpu_count()
+        thread_count = multiprocessing.cpu_count() + 2
         output = 1
-    
-    thread_count = min(thread_count,im_dim ** 2) #thread_count should always be less than the total number of pixels. 
-    thread_count = min(thread_count,1010) #making sure to not use too many threads... I'm not sure if there's a concrete limit or if its determined by the OS or machine
+
+    thread_count = min(thread_count,im_dim ** 2) #thread_count should always be less than the total number of pixels.
+    thread_count = min(thread_count,1010) #making sure to not use too many threads... Going over 1010 in linux seems to always fail
     #print("threads:",thread_count)
     time_part = time.time()
-    
+
     process_list = []
     i = 0
     for y in range(0, im_dim):
@@ -148,35 +148,35 @@ if __name__ == '__main__':
             if (x != 0) & (y <= math.floor((im_dim - 1) / 2)) & (y != 0):process_list.append(-1)
             else:process_list.append(i)
             i+=1
-            
-    print("create jobs",time.time()-time_part)
-    
+
+    print("create jobs", time.time()-time_part)
+
     time_part = time.time()
     with Pool(thread_count) as p: # Creating pool of worker threads
         process_list = p.map(calcPix, process_list) # Assigning threads to calculate step counts
         gc.collect()
-        print("processing steps",time.time()-time_part)
-        
+        print("processing steps", time.time()-time_part)
+
         time_part = time.time()
         process_list = p.map(stepToPix, process_list) # Turning step counts into pixel colours
-        print("processing pixels",time.time()-time_part)
-    
-    
+        print("processing pixels", time.time()-time_part)
+
+
     time_part = time.time() # Generating 3d pixel array
     pixels = [[[0 for k in range(3)] for j in range(im_dim)] for i in range(im_dim)]
-    print("list generation",time.time()-time_part)
-    
-    time_part = time.time()
-    for i in range(len(process_list) - 1,-1,-1): # Exporting those pixel values to pixels[][]
+#    print("list generation",time.time()-time_part)
+
+#    time_part = time.time()
+    for i in range(len(process_list) - 1, -1, -1): # Exporting those pixel values to pixels[][]
         y = int(i / im_dim) # y pos
         x = i % im_dim # x pos
         pixels[y][x] = process_list[i]
         if pixels[y][x] == (-1,-1,-1): # copy over mirrored pixels if this pixel is already taken care of
             pixels[y][x] = pixels[im_dim - y][im_dim - x]
-    
+
     del(process_list)
     print("format list",time.time()-time_part)
-    
+
     #Converting pixels and saving image
     time_part = time.time()
     pixels = [item for sublist in pixels for item in sublist]
@@ -190,7 +190,7 @@ if __name__ == '__main__':
     if output != 0:im2.save(name)
     print("image generation",time.time()-time_part)
     end = time.time()
-    
+
     total = end-total_start
     print('time:',round((total)*1000)/1000,'s')
     print('each:',round((total/(im_dim**2))*100000)/100000,'s')
