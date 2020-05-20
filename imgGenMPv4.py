@@ -7,7 +7,7 @@ import time
 import gc
 import os
 from multiprocessing import Pool
-step_div = 2 #this defines how granular the sim is. higher values produce more accurate results, but take longer. Default 1
+step_div = 1 #this defines how granular the sim is. higher values produce more accurate results, but take longer. Default 1
 
 def LR(T1, T2, w1, w2):
     alpha2 = math.cos(T1 - T2)
@@ -102,7 +102,7 @@ def calcPix(i):
 # I don't remember what this section was for, but I clearly thought it was important enough to comment in
 (1,1) == (max,max)
 (1,2) == (max, max - 1)
-(2,2) == (max - 1,max-1)
+(2,2) == (max - 1,max - 1)
 (x,y) == (max - x + 1, max - y + 1)
 """
 
@@ -136,8 +136,8 @@ if __name__ == '__main__':
         thread_count = multiprocessing.cpu_count() + 2
         output = 1
 
-    thread_count = min(thread_count,im_dim ** 2) #thread_count should always be less than the total number of pixels.
-    thread_count = min(thread_count,1010) #making sure to not use too many threads... Going over 1010 in linux seems to always fail
+    thread_count = min(thread_count, im_dim ** 2) #thread_count should always be less than the total number of pixels.
+    thread_count = min(thread_count, 1010) #making sure to not use too many threads... Going over 1010 in linux seems to always fail
     #print("threads:",thread_count)
     time_part = time.time()
 
@@ -147,7 +147,7 @@ if __name__ == '__main__':
         for x in range(0, im_dim): # create 1d array for worker pool, telling worker pool to skip mirrored pixels
             if (x != 0) & (y <= math.floor((im_dim - 1) / 2)) & (y != 0):process_list.append(-1)
             else:process_list.append(i)
-            i+=1
+            i += 1
 
     print("create jobs", time.time()-time_part)
 
@@ -159,12 +159,12 @@ if __name__ == '__main__':
 
         time_part = time.time()
         process_list = p.map(stepToPix, process_list) # Turning step counts into pixel colours
-        print("processing pixels", time.time()-time_part)
+        print("processing pixels", time.time() - time_part)
 
 
     time_part = time.time() # Generating 3d pixel array
     pixels = [[[0 for k in range(3)] for j in range(im_dim)] for i in range(im_dim)]
-#    print("list generation",time.time()-time_part)
+#    print("list generation",time.time() - time_part)
 
 #    time_part = time.time()
     for i in range(len(process_list) - 1, -1, -1): # Exporting those pixel values to pixels[][]
@@ -175,7 +175,7 @@ if __name__ == '__main__':
             pixels[y][x] = pixels[im_dim - y][im_dim - x]
 
     del(process_list)
-    print("format list", time.time()-time_part)
+    print("format list", time.time() - time_part)
 
     #Converting pixels and saving image
     time_part = time.time()
@@ -188,7 +188,7 @@ if __name__ == '__main__':
     else:
         name = "outputs/doot"+str(im_dim)+"MT"+re.sub('[.]', '_', str(float(mult)))+".png" # creating image title
     if output != 0: im2.save(name)
-    print("image generation",time.time()-time_part)
+    print("image generation",time.time() - time_part)
     end = time.time()
 
     total = end-total_start
